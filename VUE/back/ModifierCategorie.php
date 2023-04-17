@@ -21,7 +21,7 @@ if( isset($_POST['nom']) and isset($_POST['pointfidel']) and isset($_POST['nbpro
 
     $cat=new Categorie($_POST['nom'],$_POST['pointfidel'],$_POST['nbproduit']);
 
-//Partie3
+//Partie3//
 $categorieC = new CategorieC();
 $categorieC->modifierCategorie($cat,$id);
 
