@@ -16,7 +16,7 @@ $categorieC->ajouterCategorie($cat);
         header('Location: AfficherCategories.php');
 
     }else{
-        echo "vérifier les champs";
+        echo "vérifieer les champs";
         die();
     }
 //*/

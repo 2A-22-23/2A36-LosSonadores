@@ -1,8 +1,12 @@
 <?php
 include  "../../Controller/CategorieC.php";
+include  "../../Controller/ProduitC.php";
 
 $catC= new CategorieC();
-    $liste=$catC->afficherCategories();
+$prodC= new ProduitC();
+
+$liste=$catC->afficherCategories();
+$listee=$catC->afficherCategories();
 
 ?>
 <!DOCTYPE html>
@@ -27,6 +31,36 @@ $catC= new CategorieC();
   <link rel="stylesheet" href="css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="images/favicon.png" />
+
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = google.visualization.arrayToDataTable([
+                ['Categorie', 'Produit'],
+                <?php
+                    foreach ($listee as $row1){
+                ?>
+                ['<?php echo $row1['nom']; ?>', <?php echo $prodC->recupererProduitByCategory($row1['id'])->rowCount();  ?>],
+                <?php
+                }
+                ?>
+                ['', 0]
+            ]);
+
+            var options = {
+                title: 'Les Statistiques'
+            };
+
+            var chart = new google.visualization.PieChart(document.getElementById('piechart'));
+
+            chart.draw(data, options);
+        }
+    </script>
+
 </head>
 <body>
   <div class="container-scroller">
@@ -46,6 +80,8 @@ $catC= new CategorieC();
                 <div class="card-body">
                   <p class="card-title mb-0">Categories</p>
                   <div class="table-responsive">
+                  <div id="piechart" style="width: 900px; height: 500px;"></div>
+
                     <table class="table table-striped table-borderless">
                       <thead>
                         <tr>

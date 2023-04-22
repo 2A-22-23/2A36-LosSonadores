@@ -3,8 +3,8 @@ require_once "../../config.php";
 class ProduitC{
 
     
-    function rechercherTicket($str){
-        $sql="select * from Produit where nom like '%".$str."%'";
+    function rechercherProduit($str){
+        $sql="select * from Produit where nom like '%".$str."%' or prix like '%".$str."%' ";
         $db = config::getConnexion();
         try{
             $liste=$db->query($sql);
@@ -15,6 +15,19 @@ class ProduitC{
         }
     }
 
+
+    function recupererProduitByCategory($id_categorie){
+        $sql="SELECT * from Produit where id_categorie='$id_categorie'";
+        $db = config::getConnexion();
+        try{
+            $liste=$db->query($sql);
+            return $liste;
+        }
+        catch (Exception $e){
+            die('Erreur: '.$e->getMessage());
+        }
+    }
+    
 public function afficherProduits(){
     $sql="SELECT * From Produit";
     $db=config::getConnexion();

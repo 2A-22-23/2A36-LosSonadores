@@ -49,6 +49,10 @@ $prodC= new ProduitC();
                 <div class="card-body">
                   <p class="card-title mb-0">Produits</p>
                   <div class="table-responsive">
+                                            <form>
+                                                <input type="text" value="" class="form-control" placeholder="Recherche..."  id="rech">
+                                            </form>
+
                     <table class="table table-striped table-borderless">
                       <thead>
                       <tr>
@@ -60,38 +64,7 @@ $prodC= new ProduitC();
                                 <th>Action</th>
                       </tr>
                       </thead>
-                      <tbody>
-                      <?php
-                                        foreach($liste as $row){
-                                      ?>
-                                        <tr>
-                                            <td><?php echo $row['nom']; ?></td>
-                                            <?php
-                                            $resultaa = $catC->afficherCategorieWithID($row["id_categorie"]);
-                                            foreach($resultaa as $row2){
-                                            ?>
-                                            <td> <?php echo $row2['nom']; ?></td>
-                                            <?php
-                                            }
-                                            ?>
-                                            <td><?php echo $row['prix']; ?></td>
-                                            <td><img src="<?php echo $row['image']; ?>" heigth="500" width=500></td>
-                                            <td><?php echo $row['informations']; ?></td>
-                                            <td>
-                                                <form method="POST" action="ModifierProduit.php?id=<?PHP echo $row['id']; ?>">
-                                                    <input type="submit" class="btn btn-warning" value= "Modifier">
-                                                </form>
-                                               <form method="POST" action="supprimerProduit.php">
-                                                    <input type="submit" class="btn btn-danger" value= "supprimer">
-                                                    <input type="hidden" value="<?PHP echo $row['id']; ?>" name="id">
-                                                </form>
-                                            </td>
-                                        </tr>
-
-                                                <?php
-                                            }
-                                        ?>           
-
+                      <tbody id="tableau">
                       </tbody>
                     </table>
                   </div>
@@ -132,6 +105,37 @@ $prodC= new ProduitC();
   <script src="js/dashboard.js"></script>
   <script src="js/Chart.roundedBarCharts.js"></script>
   <!-- End custom js for this page-->
+
+  <script type = "text/javascript">
+        $(document).ready(function(){
+            load_data();
+            function load_data(str)
+            {
+                $.ajax({
+                    url:"AjaxProduit.php",
+                    method:"post",
+                    data:{str:str},
+                    success:function(data)
+                    {
+                        $('#tableau').html(data);
+                    }
+                });
+            }
+
+            $('#rech').keyup(function(){
+                var recherche = $(this).val();
+                if(recherche != '')
+                {
+                    load_data(recherche);
+                }
+                else
+                {
+                    load_data();
+                }
+            });
+        });
+    </script>
+
 </body>
 
 </html>
