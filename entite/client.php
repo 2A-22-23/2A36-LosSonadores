@@ -11,9 +11,9 @@ private $adresse;
 private $email;
 private $login;
 private $mdp;
-
+private $code;
 private $image;
-function __construct($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image)
+function __construct($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code)
 {
 
     $this->nom=$nom;
@@ -25,6 +25,22 @@ function __construct($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$
     $this->login=$login;
     $this->mdp=$mdp;
 	$this->image=$image;
+	$this->code=$code;
+}
+
+function __construct1($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image)
+{
+
+    $this->nom=$nom;
+    $this->prenom=$prenom;
+	$this->type=$type;
+    $this->telephone=$telephone;
+    $this->adresse=$adresse;
+    $this->email=$email;
+    $this->login=$login;
+    $this->mdp=$mdp;
+	$this->image=$image;
+
 }
 
 
@@ -170,6 +186,17 @@ public function setMdp($mdp): self {
 	 */
 	public function setImage($image): self {
 		$this->image = $image;
+		return $this;
+	}
+
+	
+	public function getCode() {
+		return $this->code;
+	}
+	
+
+	public function setCode($code): self {
+		$this->code = $code;
 		return $this;
 	}
 }

@@ -33,16 +33,16 @@ if(isset($_POST['submit']))
     
     $type = $_POST['type'];
     $image = $_POST['image'];
-   
+    $code = $_POST['code'];
     
     $db = config::getConnexion();
   
 
     
-   $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image);
+   $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code);
          $clientc = new clientc();
          
-         $clientc->updateUser($idclient,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image);
+         $clientc->updateUser($idclient,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code);
  
  
          echo "<script>alert('modifiee ');</script>";
@@ -127,6 +127,8 @@ if(isset($_POST['submit']))
         $select_profile->execute([$idclient]);
         if($select_profile->rowCount() > 0){
         $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
+        $image = base64_encode($fetch_profile['image']);
+
      ?>
      
      
@@ -151,7 +153,7 @@ if(isset($_POST['submit']))
       <li><a href="#contact">Contact</a></li>
         
 
-      <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["nom"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
+      <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?> </span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
       <ul>
               <li><a href="show_user.php">Show your account infos</a></li>
               <li><a href="#">Update your account</a></li>
@@ -235,8 +237,19 @@ if(isset($_POST['submit']))
     <label for="prenom">Last Name:</label>
     <input type="text" name="prenom" id="prenom" value="<?= $fetch_profile["prenom"]; ?>">
 
-    <label for="image">Profile Picture:</label>      
+    <label for="image">Profile Picture:</label>    
+    <?php if ($image) :    ?>
+        
+        <li><img src="data:image/jpeg;base64,<?= $image ?>" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></li>
+        <?php endif; ?>  
+        <br>
     <input type="file" name="image" placeholder="enter your image">
+   <br>
+   <br>
+
+
+   <input type="hidden" name="code" id="code" value="<?= $fetch_profile["code"]; ?>">
+
 
     <label for="telephone">Your Number:</label>
     <input type="text" name="telephone" id="telephone" value="<?= $fetch_profile["telephone"]; ?> ">
@@ -258,8 +271,11 @@ if(isset($_POST['submit']))
       <option value="Patient">Patient</option>
     </select>
 
+
     <label for="password">New Password:</label>
     <input type="password" name="mdp" id="mdp" value="<?= $fetch_profile["mdp"]; ?>">
+
+
 
     <input type="submit" value="Submit" name="submit">
   </form>

@@ -8,9 +8,12 @@ if(isset($_SESSION['idclient'])){
    $idclient = '';}
 
 
- 
+ $msg="";
 
 ?>
+
+
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -22,12 +25,15 @@ if(isset($_SESSION['idclient'])){
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="../Impact/assets/css/login.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-   </head>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>   
+</head>
 <body>
 
 <div class="container">
+    
     <input type="checkbox" id="flip">
+    
     <div class="cover" >
       <div class="front">
         <!--<img src="images/frontImg.jpg" alt="">-->
@@ -48,7 +54,7 @@ if(isset($_SESSION['idclient'])){
         <div class="form-content">
           <div class="login-form">
 
-
+          <?php echo $msg; ?>
             <div class="title">Login</div>
           <form action="login_core.php"  method="post">
        <div class="input-boxes">
@@ -60,12 +66,23 @@ if(isset($_SESSION['idclient'])){
          <i class="fas fa-lock"></i>
          <input type="password" name="mdp" placeholder="Enter your password" required>
       </div>
-              <div class="text"><a href="#">Forgot password?</a></div>
+
+      <br>
+      <div class="input-box">
+      <div class="g-recaptcha" data-sitekey="6LeoF5IlAAAAABw3al2nWSr7lxy8jrq9KvdHXW3d"></div>
+      </div>
+      <br>
+              <div class="text"><a href="forget_pass.php">Forgot password?</a></div>
               <div class="button input-box">
-                <input type="submit" value="sumbit" name="enter">
+                <input id="lel" type="submit" value="sumbit" name="enter">
               </div>
               <div class="text sign-up-text">Don't have an account? <label for="flip">Sign up now</label></div>
             </div>
+            <div class="button input-box">
+  <input id="lel" type="submit" value="home page" name="enter" onclick="window.location.href='index.php';">
+</div>
+
+
         </form>
 </div>  
 
@@ -131,7 +148,7 @@ if(isset($_SESSION['idclient'])){
        
         <div class="input-box">
                 <i class="fas fa-envelope"></i>
-          <input type="email"  name="email"  placeholder="enter your email"  id="email" onkeyup="checkEmail()" />
+          <input type="text"  name="email"  placeholder="enter your email"  id="email" onkeyup="checkEmail()" />
           <div id="email_error" class="val_error"></div>
 
         </div>
@@ -508,6 +525,25 @@ var nom = document.forms['register']['nom'];
 
 
     
+</script>
+<script>
+$(document).on('submit','#lel',function()
+{
+    var response =grecaptcha.getResponce();
+alert(response);
+});
+<script src="js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function (c) {
+            $('.alert-close').on('click', function (c) {
+                $('.main-mockup').fadeOut('slow', function (c) {
+                    $('.main-mockup').remove();
+                });
+            });
+        });
+    </script>
+
+
 </script>
    
 </body>

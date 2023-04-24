@@ -6,15 +6,16 @@ class clientc
 {
 function ajouter_client ($client)
 {
-$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,image) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:image) ";
+$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,image,code) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:image,:code) ";
 $db=config::getConnexion();
-
+$mdp = $client->getMdp();
+$mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
 try
 {
     $req = $db->prepare($sql);
 
     $login = $client->getlogin();
-    $mdp = $client->getMdp();
+
     $nom = $client->getnom();
     $prenom = $client->getprenom();
     $telephone = $client->getTelephone();
@@ -22,10 +23,11 @@ try
     $adresse = $client->getadresse();
     $type=$client->getType();
     $image=$client->getImage();
-
+    $code=$client->getCode();
+    
     $req->bindValue(':login',$login);
     $req->bindValue(':type',$type);
-    $req->bindValue(':mdp', $mdp);
+    $req->bindValue(':mdp', $mdp_hash);
     $req->bindValue(':nom', $nom);
     $req->bindValue(':prenom', $prenom);
     $req->bindValue(':telephone', $telephone); 
@@ -33,7 +35,7 @@ try
     $req->bindValue(':adresse', $adresse);
     $req->bindValue(':image',$image);
 
-
+    $req->bindValue(':code',$code);
     $req->execute();
     //echo "<script>alert('added ');</script>";
 
@@ -148,15 +150,16 @@ function getAllUsers() {
     return $rows;
 }
 
-function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image)
+function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code)
  {
-    //$mdp=md5($mdp);
+
+    $mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
     try {
         $con = config::getConnexion();
         $sql = "UPDATE user set 
                     nom= '$nom',prenom='$prenom',
                     telephone='$telephone',adresse='$adresse',
-                     email='$email',login='$login',mdp='$mdp',type='$type',image='$image' WHERE idclient='$id'";
+                     email='$email',login='$login',mdp='$mdp_hash',type='$type',image='$image',code='$code' WHERE idclient='$id'";
     
         $stmt = $con->query($sql);
     }

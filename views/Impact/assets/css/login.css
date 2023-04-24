@@ -229,4 +229,57 @@
   font-weight: bold;
 }
 
+
+.w3l-workinghny-form .logo {
+  text-align: center;
+}
+
+.w3l-mockup-form .main-mockup {
+  position: relative;
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+  margin: 40px 0;
+}
+
+.w3l-mockup-form .alert-close {
+  cursor: pointer;
+  height: 35px;
+  width: 35px;
+  line-height: 35px;
+  position: absolute;
+  right: -5px;
+  top: -5px;
+  background: #62c16e;
+  border-radius: 50px;
+  color: #fff;
+  text-align: center;
+}
+
+.alert {    
+  padding: 1rem;
+  border-radius: 5px;
+  color: white;
+  margin: 1rem 0;
+}
+
+.alert-success {
+  background-color: #42ba96;
+}
+
+.alert-danger {
+  background-color: #fc5555;
+}
+
+.alert-info {
+  background-color: #2E9AFE;
+}
+
+.alert-warning {
+  background-color: #ff9966;
+}
+
+
  }
