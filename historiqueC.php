@@ -1,15 +1,15 @@
 <?php
 include_once "C:/xampp/htdocs/PROJET_PHARMACIEcrud/config.php";
-include_once "C:/xampp/htdocs/PROJET_PHARMACIEcrud/Model/pharmacie.php";
+include_once "C:/xampp/htdocs/PROJET_PHARMACIEcrud/Model/historique.php";
 //include "../config.php";
-//include "../Model/pharmacie.php';
+//include "../Model/historique.php';
 
 
-class pharmacieC
+class historiqueC
 {
-    public function listpharmacie()
+    public function listhist()
     {
-        $sql = "SELECT * FROM pharmacie";
+        $sql = "SELECT * FROM historique";
         $db = config::getConnexion();
         try {
             $liste = $db->query($sql);
@@ -19,9 +19,9 @@ class pharmacieC
         }
     }
 
-    function deletepharmacie($id)
+    function deletehist($id)
     {
-        $sql = "DELETE FROM pharmacie WHERE idphar = :id";
+        $sql = "DELETE FROM historique WHERE idhis = :id";
         $db = config::getConnexion();
         $req = $db->prepare($sql);
         $req->bindValue(':id', $id);
@@ -33,45 +33,46 @@ class pharmacieC
         }
     }
 
-    function addpharmacie($pharmacie)
+    function addhist($historique)
     {
         $sql =
-        "INSERT INTO pharmacie VALUES ( :N, :ad, :ville)";
+        "INSERT INTO historique VALUES ( NULL, :patient_name , :doctor_name :prix, :date)";
         $db = config::getConnexion();
         try {
          
             $query = $db->prepare($sql);
             $query->execute([
-                'N' => $pharmacie-> getName(),
-                'ad' => $pharmacie->getAddress(),
-                'ville' => $pharmacie->getville(),
-              
-                
+                NULL,
+                'doctor_name' => $historique->getdoctor_name(),
+                'patient_name' => $historique->getpatient_name(),
+                'prix' => $historique-> getprix(),
+                'date' => $historique->getdate()
+             
               
             ]);
-            $pharmacie_id = $db->lastInsertId();
         } catch (Exception $e) {
             echo 'Error: ' . $e->getMessage();
         }
     }
 
-    function updatepharmacie($pharmacie, $idphar)
+    function updatehist($historique, $idhis)
 {
     try {
         $db = config::getConnexion();
         $query = $db->prepare(
-            'UPDATE pharmacie SET 
-                Name = :Name, 
-                Ville = :ville, 
-                address = :address
-            WHERE idphar= :id'
+            'UPDATE historique SET 
+                patient_name = :patient_name,
+                doctor_name = : doctor_name,
+                prix = :prix, 
+                date = :date
+            WHERE idhis= :id '
         );
         $query->execute([
-          
-            'Name' => $pharmacie->getName(),
-            'ville' => $pharmacie->getVille(),
-            'address' => $pharmacie->getAddress(),
-            'id' => $idphar
+            'patient_name' => $historique->getpatient_name(), 
+           'doctor_name'=> $historique->getdoctor_name(), 
+            'prix' => $historique-> getprix(),
+            'date' => $historique->getdate(),
+            'id' => $idhis
         ]);
         echo $query->rowCount() . " records UPDATED successfully <br>";
     } catch (PDOException $e) {
@@ -79,23 +80,20 @@ class pharmacieC
     }
 }
 
-    function showpharmacie($id)
+    function showhist($id)
     {
-        $sql = "SELECT * from pharmacie where idphar = $id";
+        $sql = "SELECT * from historique where idhis = $id";
         $db = config::getConnexion();
         try {
             $query = $db->prepare($sql);
             $query->execute(); 
 
-            $pharmacie = $query->fetch();
-            return $pharmacie;
+            $historique = $query->fetch();
+            return $historique;
         } catch (Exception $e) {
             die('Error: ' . $e->getMessage());
         }
     }
-
-
-
 }
 
 
