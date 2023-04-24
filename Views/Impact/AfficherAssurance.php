@@ -168,8 +168,8 @@ $list = $as->AfficherAssurances($email);
     <?php } ?>
     
     <div class="text-center">
-      <a href="remboursement.php"><strong>Remboursement</strong></a>
-    </div>
+  <a href="frontAddRemboursement.php?email=<?= $email ?>&idAssurance=<?= $Assurances['id_assurance'] ?>"><strong>Remboursement</strong></a>
+</div>
   </div>
 </div>
 
@@ -214,7 +214,7 @@ const nomAssuranceInput = document.getElementById('nom_assurance');
 
   if (!regex.test(nomAssuranceValue)) { // Si la chaîne ne contient pas que des lettres
     event.preventDefault(); // Empêcher l'envoi du formulaire
-    nomError.textContent = 'le nom doit contenir que des lettres';
+    nomError.textContent = 'the name has to have lettre';
                   
   }
   else

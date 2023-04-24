@@ -95,7 +95,7 @@
          <span id="email-error" style="color: red; font-weight: bold;"></span>
       </div>
       <div class="button input-box">
-        <input id="idbutton" type="submit" value="submit" name="enter">
+        <input id="idbutton" type="submit" value="submit" name="enter" disabled>
       </div>
     </div>
   </div>
@@ -106,7 +106,38 @@
   </section>
  
   <script> 
-   function checkmail() {
+/*function checkmail() {
+  let email = document.getElementById("email").value;
+  let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  if (!emailRegex.test(email)) {
+    document.getElementById("email-error").innerHTML = "Please enter a valid email address.";
+  } else {
+    document.getElementById("email-error").innerHTML = "";
+  }
+}*/
+
+function checkmail() {
+  let email = document.getElementById("email").value;
+  let emailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+  let submitButton = document.getElementById("idbutton");
+  let emailError = document.getElementById("email-error");
+
+  if (email === "") {
+    emailError.innerHTML = "Please enter an email address.";
+    submitButton.disabled = true;
+  } else if (!emailRegex.test(email)) {
+    emailError.innerHTML = "Please enter a valid email address.";
+    submitButton.disabled = true;
+  } else {
+    emailError.innerHTML = "";
+    submitButton.disabled = false;
+  }
+}
+
+  
+
+
+   /*function checkmail() {
      
       const emailInput = document.getElementById('email');
       const emailError = document.getElementById('email-error');
@@ -129,8 +160,8 @@
           }
       };
       xhr.send(`email=${emailInput.value}`);
-  }
- /* function checkEmail() {
+  } 
+   function checkEmail() {
   const emailInput = document.getElementById("email");
   const emailError = document.getElementById("email-error");
 
@@ -141,4 +172,4 @@
     emailError.textContent = "";
   }
 }*/
-  </script>
+</script>

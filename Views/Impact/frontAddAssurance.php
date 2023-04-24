@@ -68,94 +68,260 @@
 
   <!-- ======= add assurance Section ======= -->
   <style>
-#idbutton {
-    background: var(--color-primary);
-    border: 0;
-    padding: 14px 45px;
-    color: #fff;
-    transition: 0.4s;
-    border-radius: 50px;
+    body {
+    font-family: 'Lato', sans-serif;
 }
-.form-center{
-  display:flex;
-  justify-content: center;
+
+h1 {
+    margin-bottom: 40px;
 }
- </style> 
+
+label {
+    color: #333;
+}
+
+.btn-send {
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    width: 80%;
+    margin-left: 3px;
+    }
+.help-block.with-errors {
+    color: #ff5050;
+    margin-top: 5px;
+
+}
+
+.card{
+	margin-left: 10px;
+	margin-right: 10px;
+}
+
+    </style>
 <div class="container">
   <div class ="section-header">
               <h2>Assurance</h2>
 </div>      
-<form method="post" action="addAssurance.php" > 
+<form method="post" action="addAssurance.php"  onsubmit="return Validate(this)" name="assurance"> 
 <input type="hidden" name="email" value="<?php echo $_GET['email']; ?>">
-      
-              <div class="form-center">
-              <form >
-              <div class="form-group">
-   
-  <div class="form-group">
-    <div class ="row">
-    <label for="nom">Assurance name </label>
-    <input type ='text'  name ='nom_assurance' id='nom_assurance' placeholder="Entrer votre nom" onkeyup="checknom()">
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
-  </div>
-  <div class="form-group">
-  <div class ="row">
-  <label for="matricule_assurance">Assurance matricule  </label>  
-  <input type ='text'  name ='matricule_assurance' id='matricule_assurance' placeholder="Entrer votre matricule" onkeyup="checkmatricule()">
-  <span id="matricule-error" style="color: red; font-weight: bold;"></span>
 
-  </div>
-  </div>
-  <div class="form-group">
-  <div class ="row">
-  <label for="nom">Assurance type </label>
- <select name ='type_assurance'>
-  <option value="Cnss">Cnss</option>
-  <option value="Cnrps">Cnrps</option>
-  <option value="Convention Bilatérale">Convention Bilatérale</option>
-</select>
-   <label for="date_assurance">Date </label>  
-  <input type ='date'  name ='date_assurance' id='date_assurance' placeholder="date" >
+       <div class="row ">
+      <div class="col-lg-7 mx-auto">
+        <div class="card mt-2 mx-auto p-4 bg-light">
+            <div class="card-body bg-light">
+       
+            <div class = "container">
+                             <form id="contact-form" role="form">
 
-  </div>
-  </div>
-  <div class="form-group">
-  <div class ="row">
-  <label for="nom">Status</label>
- <select name ='status_assurance'>
-  <option value="active">Active</option>
-  <option value="non active">Non active</option>
- 
-</select>
-<!--<div class="form-group">
-  <div class ="row">
-  <label for="type_assurance"> type assurance </label>  
-  <input type ='text' required name ='type_assurance' id='type_assurance' placeholder="Entrer type assurance">
-  </div>
-<form action="frontAddAssurance.php">
-<label for="type_assurance">Type Assurance  </label> 
-  <select id="type" name="type" size="3" multiple>
-    <option value="Cnss">Cnss</option>
-    <option value="Cnrps">Cnrps</option>
-    <option value="Convention bilatérale">convention bilatérale</option>
-  </select>-->
-  <!--<input type="submit" name='ok'>-->
-</form>
-</div>
-</div>
-  <div class="text-center">
-                <button id='idbutton' type="submit" name='idbutton'>add assurance</button></div>
+            
+
+            <div class="controls">
+
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nom">Assurance Name *</label>
+                            <input id="nom_assurance" type="text" name="nom_assurance" class="form-control" placeholder="Enter your name *" onkeyup ="checknom()"  >
+                        </div>
+                        <span id="nom-error" style="color: red; font-weight: bold;"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="date_assurance">Assurance Date *</label>
+                            <input id="date_assurance" type="date" name="date_assurance" class="form-control" placeholder="Please enter the date *"  >
+                            
+                        </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="matricule_assurance">Assurance matricule *</label>
+                            <input id="matricule_assurance" type="text" name="matricule_assurance" class="form-control" placeholder="Please enter your matricule *" onkeyup="checkmatricule()" >
+                            
+                        </div>
+                        <span id="matricule-error" style="color: red; font-weight: bold;"></span>
+                    </div>
+                    <div class="col-md-6">
+                         <div class="form-group">
+                             <label for="nom">Assurance type *</label>
+                              <select id="type_assurance" name="type_assurance" class="form-control"  >
+                                <option value="" selected disabled>--Select Your type--</option>
+                                <option value="Cnss">Cnss</option>
+                                <option value="Cnrps">Cnrps</option>
+                                <option value="Convention Bilatérale">Convention Bilatérale</option>
+                               </select>
+                            
+                        </div>
+                    </div>
+                </div>
                
-</form>
+                        <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="nom">Assurance Status *</label>
+                            <select id="status_assurance" name="status_assurance" class="form-control" >
+                                <option value="" selected disabled>--Select Your status--</option>
+                                <option value="active">Active</option>
+                                <option value="non active">Non active</option>
+                            </select>
+                            
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12">
+                        
+                            <button id='idbutton' type="submit" name='idbutton' class="btn btn-success btn-send  pt-2 btn-block
+                            ">add assurance</button></div>
+                    
+                </div>
+          
+                </div>
+
+
+        </div>
+         </form>
+        </div>
+            </div>
+
+
+    </div>
+        <!-- /.8 -->
+
+    </div>
+    <!-- /.row-->
 
 </div>
 </div>
-</div>
-</form>
 
+</form>
+<script type="text/javascript" language="javascript">
+
+    var nom = document.forms['assurance']['nom_assurance']; 
+    var matricule = document.forms['assurance']['matricule_assurance']; 
+    var type = document.forms['assurance']['type_assurance']; 
+    var status = document.forms['assurance']['status_assurance']; 
+    var date = document.forms['assurance']['date_assurance']; 
+
+
+
+    function Validate()
+    { 
+        
+        if(nom.value == "")
+        {
+            nom.style.border = "3px solid red";
+            alert("You didnt enter your Assurancename!");
+            nom.focus();
+            return false;
+
+
+        }else{    nom.style.border = "1px solid #5E6E66";}
+        
+        
+        if(matricule.value == "")
+        {
+          matricule.style.border = "3px solid red";
+            alert("You didnt enter your matricule!");
+            matricule.focus();
+            return false;
+        }else{    matricule.style.border = "1px solid #5E6E66";}
+		  
+        if(date.value == "")
+        {
+          date.style.border = "3px solid red";
+            alert("You didnt enter date!");
+            date.focus();
+            return false;
+        }else{    date.style.border = "1px solid #5E6E66";}
+        
+        if(type.value == "")
+        {
+          type.style.border = "3px solid red";
+            alert("You didnt enter your type!");
+            type.focus();
+            return false;
+        }else{    type.style.border = "1px solid #5E6E66";}
+
+
+        if(status.value == "")
+        {
+          status.style.border = "3px solid red";
+            alert("You didnt enter your status!");
+            status.focus();
+            return false;
+        }else{    status.style.border = "1px solid #5E6E66";}
+      
+
+    }
+
+
+    
+</script>
   </section>
   <script> 
+
+
    function checkmatricule() {
+    
+      const matriculeInput = document.getElementById('matricule_assurance');
+      const matriculeError = document.getElementById('matricule-error');
+
+      // Make an AJAX request to check if the matricule already exists
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', 'check_matriculeremb.php');
+      xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+      xhr.onload = function() {
+          if (xhr.status === 200) {
+              const response = JSON.parse(xhr.responseText);
+              if (response.exists) {
+                  matriculeError.textContent = 'matricule already taken';
+                  document.getElementById("idbutton").disabled = true;
+              } else {
+                  matriculeError.textContent = '';
+                 // enableButton();
+                 document.getElementById("idbutton").disabled = false;
+              }
+          }
+      };
+      xhr.send(`matricule_assurance=${matriculeInput.value}`);
+  }
+  
+  function checknom() {
+    const nomInput = document.getElementById('nom_assurance');
+    const nomError = document.getElementById('nom-error');
+    const regex = /^[a-zA-Z]+$/; // Expression régulière pour les lettres uniquement
+    const nomAssuranceValue = nomInput.value.trim(); // Supprimer les espaces au début et à la fin de la chaîne
+
+    if (!regex.test(nomAssuranceValue)) { // Si la chaîne ne contient pas que des lettres
+      nomError.textContent = 'the name has to have lettre';
+      document.getElementById("idbutton").disabled = true;
+    } else {
+      nomError.textContent = '';
+     //
+      //enableButton();
+      document.getElementById("idbutton").disabled = false;
+    }
+  }
+
+  
+
+  function enableButton() {
+    const nomInput = document.getElementById('nom_assurance');
+    const matriculeInput = document.getElementById('matricule_assurance');
+  
+    const button = document.getElementById('idbutton');
+    
+    if (nomInput.value && matriculeInput.value) {
+      button.disabled = false;
+    } else {
+      button.disabled = true;
+    }
+  }
+  
+
+
+   /*function checkmatricule() {
     
       const matriculeInput = document.getElementById('matricule_assurance');
       const matriculeError = document.getElementById('matricule-error');
@@ -205,7 +371,7 @@ const nomAssuranceInput = document.getElementById('nom_assurance');
 ;
 
 
-  }
+  }*/
   
   </script>
   <!-- <script src="validation.js"></script> -->

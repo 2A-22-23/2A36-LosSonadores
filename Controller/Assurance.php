@@ -21,7 +21,9 @@ class Assurance
     public function updateAssurance($id, $nom, $matricule, $type ,$date,$status)
     {
         $db = config::getConnexion();
-        $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type ,date_assurance =:date ,status_assurance=:status WHERE id_assurance = :id";
+       // $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type ,date_assurance =:date ,status_assurance=:status WHERE id_assurance = :id";
+       $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type, date_assurance = :date, status_assurance = :status WHERE id_assurance = :id ";
+
         $query = $db->prepare($sql);
         $query->bindParam(':id', $id);
         $query->bindParam(':nom', $nom);
@@ -95,10 +97,8 @@ class Assurance
     { 
       $db = config::getConnexion();
       $query = $db->prepare("DELETE FROM t_assurance WHERE id_assurance = :id ");
-      $query2 = $db->prepare("DELETE FROM t_remboursement WHERE id_assurance = :id ");
-      $query2->bindParam(':id', $id);
+     // $query = $db->prepare("DELETE FROM t_assurance WHERE id_assurance = :id ");
       $query->bindParam(':id', $id);
-      $query2 ->execute();
       $query->execute(); 
       
     }
