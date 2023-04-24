@@ -218,7 +218,8 @@ $sql = "SELECT rd.*,
                pd.nom AS patient_nom, 
                pd.prenom AS patient_prenom,
                dd.nom AS docteur_nom,
-               dd.prenom AS docteur_prenom
+               dd.prenom AS docteur_prenom,
+               dd.specialite AS specialite
         FROM rendezvous rd
         JOIN user pd ON rd.idclient = pd.idclient
         JOIN user dd ON rd.iddoc = dd.idclient
@@ -226,25 +227,28 @@ $sql = "SELECT rd.*,
 $result = $db->query($sql);
 $list = $result->fetchAll();
 ?>
+<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<button id="export-button">
+  Export to Excel
+  <img src="../View/ex.png" alt="Exporter">
+</button>
 
-<table border="1" width="70%" height="10%">
+<table  id="my-table" border="1" width="70%" height="10%">
   <tr>
-    <th>Nom Patient</th>
-    <th>Prénom Patient</th>
-    <th>Nom et Prénom Docteur</th>
+    <th>Nom et Prénom Patient</th>
+   
+ 
     <th>Date et heure</th>
     <th>Status</th>
-    <th>Action</th>
+  
   </tr>
 
   <?php if (!empty($list)) { ?>
     <?php foreach ($list as $rendezvous) { ?>
       <tr class="active-row">
-        <td><?php echo $rendezvous['patient_prenom']; ?></td>
-        <td><?php echo $rendezvous['patient_nom']; ?></td>
-        <td>
-          <?php echo 'Dr. ' . $rendezvous['docteur_nom'] . ' ' . $rendezvous['docteur_prenom']; ?>
-        </td>
+      <td><?php echo $rendezvous['patient_nom']. ' ' .$rendezvous['patient_prenom']; ?></td>
+        
+       
         <td><?php echo $rendezvous['LaDate']; ?></td>
         <td>
           <?php if($rendezvous['status'] == 0): ?>
@@ -262,7 +266,7 @@ $list = $result->fetchAll();
         </td>
         <td align="center">
           <form id="formU"method="POST" action="updateRendezVous.php">
-            <input type="submit" name="update" value="Update">
+            <input id="updateInput" type="submit" name="update" value="Update">
             <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
 
           </form>
@@ -282,13 +286,49 @@ $list = $result->fetchAll();
 
 
 
+<script>
+// Function to export table data to Excel
+function exportToExcel() {
+  // Get table object and convert it to a workbook object
+  var table = document.getElementById("my-table");
+  var workbook = XLSX.utils.table_to_book(table);
+
+  // Generate Excel file and download it
+  XLSX.writeFile(workbook, "DoctorsAppointments.xlsx");
+}
+
+// Attach click event listener to export button
+var exportButton = document.getElementById("export-button");
+exportButton.addEventListener("click", exportToExcel);
+</script>
+
+
 
 
 
 
 
 <style>
+  #export-button img {
+  width: 50px;
+  height: 50px;
+}
 
+
+#export-button {
+  color: ;
+ 
+  border: none;
+  border-radius: ;
+  cursor: pointer;
+  position: relative;
+  top: -30px;
+  right: 0;
+}
+
+#export-button:hover {
+  background-color: /* Couleur de fond du bouton au survol */
+}
 
 
 .badge-warning {
@@ -322,12 +362,13 @@ a.delete-link {
 }
 
 
-
-    table {
-    border-collapse: collapse;
-    width: 70%;
-    margin: 0 auto;
-    table-layout: fixed;
+table {
+  border-collapse: collapse;
+  width: 70%;
+  margin: 0 auto;
+  table-layout: fixed;
+  position: relative;
+  top: 30px;
 }
 
 th, td {

@@ -7,18 +7,20 @@ $list = $PlanningC->listPlanning();
 
 
 
-
 ?>
-<html>
+
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
-   <!-- Required meta tags -->
-   <meta charset="utf-8">
+  <!-- Required meta tags -->
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <title>Skydash Admin</title>
+  <title>VITALIA</title>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
   <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
+
   <link rel="stylesheet" href="vendors/css/vendor.bundle.base.css">
   <!-- endinject -->
   <!-- Plugin css for this page -->
@@ -30,17 +32,17 @@ $list = $PlanningC->listPlanning();
   <link rel="stylesheet" href="css/vertical-layout-light/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="images/favicon.png" />
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
-
 <body>
-
-<div class="container-scroller">
+  <div class="container-scroller">
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-      <span >Welcome Admin</span>
-       
-    
+      <a class="navbar-brand brand-logo mr-5" href="welcome_back.php"><img src="vitalia.svg" class="mr-2" alt="logo"/></a>
+        <a class="navbar-brand brand-logo-mini" href="welcome_back.php"><img src="vitalia.svg" alt="logo"/></a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
         <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
@@ -306,179 +308,203 @@ $list = $PlanningC->listPlanning();
       </div>
       <!-- partial -->
       <!-- partial:partials/_sidebar.html -->
-      <<nav class="sidebar sidebar-offcanvas" id="sidebar">
-  <ul class="nav">
-    <li class="nav-item">
-      <a class="nav-link" href="ListRendezVous.php">
-        <i class="icon-grid menu-icon"></i>
-        <span class="menu-title">Appointments</span>
-      </a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="DoctorSchedule.php">
-        <i class="icon-grid menu-icon"></i>
-        <span class="menu-title">Doctor's Schedule</span>
-      </a>
-    </li>
-  </ul>
-</nav>
+      <nav class="sidebar sidebar-offcanvas" id="sidebar">
+        <ul class="nav">
+          <li class="nav-item">
+            <a class="nav-link" href="ListRendezVous.php">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Appointment</span>
+            </a>
+
+            
+          </li>
+     
+       
+          <li class="nav-item">
+            <a class="nav-link" href="Doctorschedule.php">
+              <i class="icon-grid menu-icon"></i>
+              <span class="menu-title">Schedule</span>
+            </a>
+
+            
+          </li>
+          </ul>
+
+      </nav>
       <!-- partial -->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-      <style>
-
-
-
-      table {
-        text-align: center;
-        border-collapse: collapse;
-        width: 400%;
-        height: 10%;
-        margin: 1rem auto;
-    }
     
-    th, td {
-        padding: 0.5rem;
-        text-align: left;
-        border: 1px solid #ddd;
-    }
-    
-    th {
-        background-color: #6a5acd;
-        color: white;
-    }
+          <div class="row">
+            <div class="col-md-12 grid-margin stretch-card">
+              <div class="card">
+                <div class="card-body">
+                <p class="card-title">Doctor's Schedule table</p>
 
-    tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    tr:hover {
-        background-color: #ddd;
-    }
-
-    input[type="submit"], a {
-        background-color: #6a5acd;
-        color: white;
-        border: none;
-        padding: 0.5rem;
-        cursor: pointer;
-        text-decoration: none;
-        border-radius: 5px;
-    }
-
-    a:hover {
-        background-color: #4b0082;
-    }
-
-
-    .make-appointment-btn {
-    background-color: #4CAF50; /* Couleur de fond */
-    border: none; /* Supprime la bordure */
-    color: white; /* Couleur du texte */
-    padding: 10px 20px; /* Ajoute de l'espace autour du texte */
-    text-align: center; /* Centre le texte */
-    text-decoration: none; /* Supprime le soulignement */
-    display: inline-block; /* Affiche le bouton en tant qu'élément en ligne */
-    font-size: 16px; /* Taille de police */
-    margin: 4px 2px; /* Ajoute de l'espace entre les boutons */
-    cursor: pointer; /* Change le curseur lorsque vous survolez le bouton */
-  }
-
-  .make-appointment-btn:hover {
-    background-color: #3e8e41; /* Change la couleur de fond au survol */
-  }
+                <style>
 
 
 
-  .modal {
-    display: none; /* Par défaut, la fenêtre modale est cachée */
-    position: fixed; /* La fenêtre modale est positionnée en mode fixe */
-    z-index: 1; /* La fenêtre modale est affichée au-dessus de tous les autres éléments */
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto; /* Permet de faire défiler la page si la fenêtre modale est trop grande */
-    background-color: rgba(0,0,0,0.4); /* Ajoute un voile noir transparent derrière la fenêtre modale */
-  }
+.styled-table {
+    border-collapse: collapse;
+    margin: 25px 0;
+    font-size: 0.9em;
+    font-family: sans-serif;
+    min-width: 400px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+}
+.styled-table thead tr {
+    background-color: #009879;
+    color: #ffffff;
+    text-align: left;
+}
+.styled-table th
+ {
+    padding: 12px 15px;
+    color:green;
+}
 
-  .modal-content {
-    background-color: white;
-    margin: 10% auto; /* Place la fenêtre modale à 10% du haut de la page */
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-  }
+.styled-table td {
+  padding: 12px 15px;
+  color: black;
+  font-weight: bold;
+} 
 
-  .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
+
+
+
+.styled-table tbody tr {
+    border-bottom: 1px solid #dddddd;
+}
+
+.styled-table tbody tr:nth-of-type(even) {
+    background-color: #f3f3f3;
+}
+
+.styled-table tbody tr:last-of-type {
+    border-bottom: 2px solid #009879;
+}
+.styled-table tbody tr.active-row {
     font-weight: bold;
-  }
-
-  .close:hover,
-  .close:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-  }
-
-</style>
+    color: #121313;
+}
+                 
+                  </style>
 
 
 
    
-<div style="display: flex; justify-content: space-between;">
-  <table border="1" width="70%" height="10%">
-    <tr>
-      <th>Nom et Prenom Doctor</th>
-     
-      <th>jour</th>
-      <th>timefrom</th>
-      <th>time to</th>
-     
-    
-    </tr>
-    <?php
-    foreach ($list as $planningdr) {
-      // Récupérer les informations de l'utilisateur correspondant à l'idClient du planning
-      $db = config::getConnexion();
-      $sql = "SELECT nom, prenom FROM user WHERE idclient = :idClient AND type='Doctor'";
-      $stmt = $db->prepare($sql);
-      $stmt->bindValue(":idClient", $planningdr['idClient']);
-      $stmt->execute();
-      $user = $stmt->fetch(PDO::FETCH_ASSOC);
-    ?>
-      <tr>
-        <td><?= 'Dr. ' . $user['nom'] . ' ' . $user['prenom'] ?></td>
-      
-        <td><?= $planningdr['jour']; ?></td>
-        <td><?= $planningdr['timeFrom']; ?></td>
-        <td><?= $planningdr['timeTo']; ?></td>
-   
-      </tr>
-    <?php
-    }
-    ?>
-  </table>
-  
+<?php
+// Define the number of results per page
+$results_per_page = 3;
+
+// Get the total number of rows in the table
+$db = config::getConnexion();
+$sql = "SELECT COUNT(*) as total FROM planningdr";
+$stmt = $db->prepare($sql);
+$stmt->execute();
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$total_results = $row['total'];
+
+// Calculate the number of pages
+$total_pages = ceil($total_results / $results_per_page);
+
+// Get the current page number
+if (!isset($_GET['page']) || $_GET['page'] < 1) {
+    $current_page = 1;
+} else if ($_GET['page'] > $total_pages) {
+    $current_page = $total_pages;
+} else {
+    $current_page = $_GET['page'];
+}
+
+// Calculate the offset for the SQL query
+$offset = ($current_page - 1) * $results_per_page;
+
+// Get the data to display on the current page
+$sql = "SELECT * FROM planningdr LIMIT $offset, $results_per_page";
+$stmt = $db->prepare($sql);
+$stmt->execute();
+$list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
+
+<div>
+    <table class="styled-table">
+        <tr>
+            <th>Nom et Prenom Doctor</th>
+            <th>Specialite</th>
+            <th>jour</th>
+            <th>timefrom</th>
+            <th>time to</th>
+        </tr>
+        <?php foreach ($list as $planningdr) { ?>
+            <tr>
+                <?php
+                // Get the doctor information
+                $db = config::getConnexion();
+                $sql = "SELECT nom, prenom, specialite FROM user WHERE idclient = :idClient AND type='Doctor'";
+                $stmt = $db->prepare($sql);
+                $stmt->bindValue(":idClient", $planningdr['idClient']);
+                $stmt->execute();
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                ?>
+                <td><?= 'Dr. ' . $user['nom'] . ' ' . $user['prenom'] ?></td>
+                <td><?=  $user['specialite'] ?></td>
+                <td><?= $planningdr['jour']; ?></td>
+                <td><?= $planningdr['timeFrom']; ?></td>
+                <td><?= $planningdr['timeTo']; ?></td>
+            </tr>
+        <?php } ?>
+    </table>
+
+    <div class="pagination">
+        <?php if ($total_pages > 1) { ?>
+            <?php if ($current_page > 1) { ?>
+                <a href="?page=<?= $current_page - 1 ?>">Previous</a>
+            <?php } ?>
+            <?php for ($i = 1; $i <= $total_pages; $i++) { ?>
+                <?php if ($i == $current_page) { ?>
+                    <span class="current"><?= $i ?></span>
+                <?php } else { ?>
+                    <a href="?page=<?= $i ?>"><?= $i ?></a>
+                <?php } ?>
+            <?php } ?>
+            <?php if ($current_page < $total_pages) { ?>
+                <a href="?page=<?= $current_page + 1 ?>">Next</a>
+            <?php } ?>
+        <?php } ?>
+    </div>
 </div>
 
 
+
+
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a,
+    .pagination span {
+        display: inline-block;
+        padding: 5px 10px;
+        border: 1px solid #ccc;
+        margin: 0 5px;
+        text-decoration: none;
+        color: green;
+    }
+
+    .pagination a:hover {
+        background-color: #ccc;
+    }
+
+    .pagination .current {
+        background-color: green;
+        color: #fff;
+        border-color: #333;
+    }
+</style>
 
 
 <!-- Bouton pour ouvrir la fenêtre modale -->
@@ -488,7 +514,7 @@ $list = $PlanningC->listPlanning();
 <div id="modal" class="modal">
   <div class="modal-content">
     <span class="close">&times;</span>
-    <form method="post" action="addPlanning.php"  id="myform">
+    <form method="post" action="addPlanning.php"  id="monform">
 
       <label>Name of Doctor:</label>
       <select name="idClient" required>
@@ -525,45 +551,16 @@ $list = $PlanningC->listPlanning();
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+<br><br>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
-        
-        
+        <footer class="footer">
+          <div class="d-sm-flex justify-content-center justify-content-sm-between">
+            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
+            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
+          </div>
+        </footer>
         <!-- partial -->
-
-
-
-
-
       </div>
       <!-- main-panel ends -->
     </div>
@@ -592,36 +589,6 @@ $list = $PlanningC->listPlanning();
   <script src="js/dashboard.js"></script>
   <script src="js/Chart.roundedBarCharts.js"></script>
   <!-- End custom js for this page-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br> <br>
-  
-   
-    
-
-
 </body>
 
 </html>

@@ -20,18 +20,17 @@ if(isset($_SESSION['idclient'])){
 };
 
 
-if(isset($_POST['ajouter']) )
+if(isset($_POST['ajouter']))
 {
-  
-    $jour = $_POST['jour'];
+    $day = $_POST['day'];
     $timeFrom = $_POST['timeFrom'];
     $timeTo = $_POST['timeTo'];
 
-    if ( !empty($jour) && !empty($timeFrom) && !empty($timeTo))
+    if ( !empty($day) && !empty($timeFrom) && !empty($timeTo))
     {
         $planningdr = new Planningdr(
             $idClient,
-            $jour,
+            $day,
             $timeFrom,
             $timeTo
         );
@@ -43,13 +42,8 @@ if(isset($_POST['ajouter']) )
             // Afficher un message d'erreur si l'ajout a échoué
             echo "Une erreur est survenue lors de l'ajout du planning.";
         }
-    } else {
-        // Afficher un message d'erreur si l'un des champs est vide
-        echo "Veuillez remplir tous les champs.";
-    }
+    } 
 }
-
-
 
 
 
@@ -123,13 +117,13 @@ if(isset($_POST['ajouter']) )
   <header id="header" class="header d-flex align-items-center">
 
 <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-  <a href="index.html" class="logo d-flex align-items-center">
+  <a href="DoctorSchedule - Copie.php" class="logo d-flex align-items-center">
     <!-- Uncomment the line below if you also wish to use an image logo -->
     <!-- <img src="assets/img/logo.png" alt=""> -->
     <h1>VITALIA<span>.</span></h1>
   </a>
   <div class="container-fluid container-xl d-flex align-items-center justify-content-between">
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="DoctorSchedule - Copie.php" class="logo d-flex align-items-center">
         <!-- Uncomment the line below if you also wish to use an image logo -->
         <!-- <img src="assets/img/logo.png" alt=""> -->
   
@@ -234,7 +228,7 @@ if(isset($_POST['ajouter']) )
   </main><!-- End #main -->
 
  
-    <hr>
+    
 
     <div id="error">
         <?php echo $error; ?>
@@ -274,10 +268,13 @@ foreach ($list as $planningdr) {
    
     <form id="formu" method="POST" action="UpdatePlanning.php">
     <input type="hidden" name="id" value="<?= $planningdr['id']; ?>">
-    <button type="submit" name="update">Update</button>
+    <button type="submit" name="Update" class="update-btn">Update</button>
     </form>
 
   
+
+
+
       <a href="DeletePlanning.php?id=<?php echo $planningdr['id']; ?>" class="delete-link">Delete</a>
 
 
@@ -304,64 +301,117 @@ foreach ($list as $planningdr) {
 
 
 
-<div>
+
 <div class="modal">
     <div class="modal-content">
     <span id="set-appointment-text">Add You Schedule Doctor </span>
 
-      <form id="myform" method="POST" action="">
+      <form id="myform" method="POST" action=""  onsubmit="return validateForm();">
       
-        <label>Jour :</label>
-        <input type="text" name="jour" ><br>
+      <label>Day:</label>
+        <select name="day"  id="day">
+          <option value="" disabled selected>Choose a day</option>
+          <option value="Monday">Monday</option>
+          <option value="Tuesday">Tuesday</option>
+          <option value="Wednesday">Wednesday</option>
+          <option value="Thursday">Thursday</option>
+          <option value="Friday">Friday</option>
+          <option value="Saturday">Saturday</option>
+      
+        </select><br>
+        <div id="message" class="error-message"></div>
 
         <label>Heure de début :</label>
         <input type="time" name="timeFrom"><br>
-
+<span id="error1" style="display:none;"></span>
         <label>Heure de fin :</label>
         <input type="time" name="timeTo"><br>
-
+        <span id="error2" style="display:none;"></span>
         <button type="submit" name="ajouter" value="Ajouter" id="set-appointment-btn">Ajouter</button>
-        <button  id="closeBtn">Annuler</button>
-      </form>
+            </form>
+
+            <a id="closeBtn" href="DoctorSchedule - Copie.php">Annuler</a>
 
       </div>
 </div>
-</div>
-
-
-
-
+<style>
+    #closeBtn {
+  display: block; /* to make the link a block element */
+  text-align: center; /* to center the link horizontally */
+  margin-top: 20px; /* to add some space between the link and other elements */
+}
+</style>
+<style>
+  .error-message {
+    color: red;
+  }
+  .valid-message {
+    display: none;
+  }
+</style>
 
 <script>
-  // Récupérer les éléments HTML correspondants
-const form = document.getElementById("myform");
-const jourInput = form.elements["jour"];
+function validateForm() {
 
-// Ajouter un événement "submit" pour le formulaire
-form.addEventListener("submit", function(event) {
-  // Récupérer la valeur saisie pour le champ "jour"
-  const jourValue = jourInput.value.trim().toLowerCase();
+  var day = document.getElementById("day");
+  
+  var dayMessage = document.getElementById("message");
+  var errorSpan1 = document.getElementById("error1");
+  var timefrom = document.getElementsByName("timeFrom")[0].value;
 
-  // Vérifier si le champ "jour" est vide ou non
-  if (jourValue === "") {
-    // Empêcher la soumission du formulaire et afficher un message d'erreur
-    event.preventDefault();
-    alert("Veuillez saisir un jour valide.");
-    return;
+  var errorSpan2 = document.getElementById("error2");
+  var timeto= document.getElementsByName("timeTo")[0].value;
+  var valid = true;
+  
+if (day.selectedIndex < 1) {
+    message.innerHTML = "Please select a day.";
+    message.className = "error-message";
+    return false;
   }
 
-  // Vérifier si la valeur saisie correspond à un jour de la semaine en français ou en anglais
-  const joursDeLaSemaine = ["dimanche", "lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi",
-                           "sunday", "monday", "tuesday", "wednesday", "thursday", "friday", "saturday"];
-  if (!joursDeLaSemaine.includes(jourValue.toLowerCase())) {
-    // Empêcher la soumission du formulaire et afficher un message d'erreur
-    event.preventDefault();
-    alert("Veuillez saisir un jour valide (par exemple : lundi, mardi, mercredi, etc.).");
+  else {
+    dayMessage.style.display = "none";
+
   }
-});
 
 
+  if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(timefrom)) {
+    errorSpan1.textContent = "Please enter a valid time format (hh:mm)";
+    errorSpan1.style.display = "inline";
+    errorSpan1.style.color = "red";
+    return false;
+  }
+  else {
+    errorSpan1.style.display = "none";
+
+  }
+  
+ if (!/^([01]\d|2[0-3]):([0-5]\d)$/.test(timeto)) {
+    errorSpan2.textContent = "Please enter a valid time to (hh:mm)";
+    errorSpan2.style.display = "inline";
+    errorSpan2.style.color = "red";
+    return false;
+  }
+  else {
+    errorSpan2.style.display = "none";
+
+  }
+  
+  // Comparaison de timefrom et timeto
+  if (timefrom >= timeto) {
+    errorSpan1.textContent = "Please enter a start time before the end time.";
+    errorSpan1.style.display = "inline";
+    errorSpan1.style.color = "red";
+    return false;
+  }
+  else {
+    errorSpan1.style.display = "none";
+  }
+  
+  return valid;
+}
 </script>
+
 
 
 

@@ -219,8 +219,8 @@ $list = $result->fetchAll();
 
 <table border="1" width="70%" height="10%">
   <tr>
-    <th>Nom Patient</th>
-    <th>Prénom Patient</th>
+    <th>Nom et Prénom Patient</th>
+   
     <th>Nom et Prenom Docteur</th>
     <th>Date et heure</th>
     <th>Action</th>
@@ -229,16 +229,22 @@ $list = $result->fetchAll();
   <?php if (!empty($list)) { ?>
     <?php foreach ($list as $rendezvous) { ?>
       <tr class="active-row">
-        <td><?php echo $rendezvous['patient_prenom']; ?></td>
-        <td><?php echo $rendezvous['patient_nom']; ?></td>
-        <td>
-          <?php
-            $doctorId = $rendezvous['iddoc'];
-            $sql = "SELECT nom, prenom FROM user WHERE idclient = $doctorId";
+       
+        <td><?php   
+            $sql = "SELECT nom, prenom FROM user WHERE idclient = $patientId";
             $result = $db->query($sql);
             if ($result->rowCount() > 0) {
               $row = $result->fetch();
-              echo 'Dr. ' . $row['nom'] . ' ' . $row['prenom'];
+              echo  $row['nom'] . ' ' . $row['prenom'];
+            } ?></td>
+        <td>
+          <?php
+            $doctorId = $rendezvous['iddoc'];
+            $sql = "SELECT nom, prenom,specialite FROM user WHERE idclient = $doctorId";
+            $result = $db->query($sql);
+            if ($result->rowCount() > 0) {
+              $row = $result->fetch();
+              echo 'Dr. ' . $row['nom'] . ' ' . $row['prenom']. ' <br>' .$row['specialite'];
             }
           ?>
         </td>

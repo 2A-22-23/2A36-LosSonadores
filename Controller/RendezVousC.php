@@ -1,6 +1,6 @@
 <?php
 include '../config.php';
-
+include '../Model/Planning.php';
 include '../Model/RendezVous.php';
 
 class RendezvousC
@@ -45,23 +45,28 @@ class RendezvousC
     }
     
     
-    
-    
-    public function addRendezvous($rdv, $doctorId) {
-        $sql = "INSERT INTO rendezvous (LaDate, idclient, status,iddoc) 
-                SELECT :LaDate, idclient, :status ,  :iddoc
+  /*  public function addRendezvous($rdv, $doctorId) {
+        $sql = "INSERT INTO rendezvous ( LaDate,idclient, status, iddoc, idp) 
+                SELECT :idclient, pd.id
                 FROM user 
-                WHERE idclient = :idclient 
-                AND type = 'Patient'";
+                JOIN planningdr pd ON pd.idClient = :iddoc
+                WHERE user.idclient = :idclient 
+                AND type = 'Patient'
+                AND DAYNAME(:LaDate) = CONCAT(UPPER(LEFT(pd.jour, 1)), LOWER(SUBSTRING(pd.jour FROM 2)))
+                AND TIME(:LaDate) >= pd.timeFrom
+                AND TIME(:LaDate) <= pd.timeTo";
         $db = config::getConnexion();
     
         try {
             $conn = $db->prepare($sql);
     
-            $conn->bindValue(":LaDate", $rdv->getLaDate());
             $conn->bindValue(":idclient", $_SESSION['idclient']);
+          
+                $conn->bindValue(":LaDate", $rdv->getLaDate());
+            
             $conn->bindValue(":status", 0); // set status to 0 by default
             $conn->bindValue(":iddoc", $doctorId);
+            $conn->bindValue(":idp",  $rdv->getIdp());
     
             $conn->execute();
             return true;
@@ -72,6 +77,91 @@ class RendezvousC
     }
     
     
+*/
+function addidp($doctorId, $LaDate) {
+    $sql = "SELECT pd.id, pd.jour, pd.timeFrom, pd.timeTo 
+    FROM planningdr pd 
+    WHERE pd.idClient = :doctor_id 
+    AND DAYOFWEEK(:LaDate) = DAYOFWEEK(pd.jour) 
+    AND TIME(:LaDate) >= pd.timeFrom 
+    AND TIME(:LaDate) <= pd.timeTo
+    ";
+            
+    $db = config::getConnexion();
+    $stmt = $db->prepare($sql);
+    $stmt->bindValue(':doctor_id', $doctorId, PDO::PARAM_INT);
+    $stmt->bindValue(':LaDate', $LaDate, PDO::PARAM_STR);
+    echo $sql;
+    $stmt->execute();
+    
+    $plannings = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    print_r($plannings);
+
+    var_dump($plannings);
+    
+    if (count($plannings) > 0) {
+        foreach ($plannings as $planning) {
+            $sql = "INSERT INTO rendezvous (idp) VALUES (:idp)";
+            $stmt = $db->prepare($sql);
+            $stmt->bindValue(':idp', $planning['id'], PDO::PARAM_INT);
+            $stmt->execute();
+        }
+        return $planning['id']; // retourne l'identifiant de la dernière planification insérée
+    } else {
+        return null; // aucune planification trouvée pour cette date et ce médecin
+    }
+}
+
+
+
+public function addRendezvous($rdv, $doctorId, $jour, $temps) {
+    $db = config::getConnexion();
+
+    try {
+        // Get the ID of the planningdr row matching the day and time
+        $sqlIdp = "SELECT id FROM planningdr 
+                   WHERE idClient = :iddoc
+                   AND jour = :jour
+                   AND timeFrom <= :temps
+                   AND timeTo >= :temps";
+
+        $stmt = $db->prepare($sqlIdp);
+        $stmt->bindValue(":iddoc", $doctorId);
+        $stmt->bindValue(":jour", $jour);
+        $stmt->bindValue(":temps", $temps);
+        $stmt->execute();
+        $idp = $stmt->fetchColumn();
+
+        if ($idp !== false) {
+            // Insert appointment information into the "rendezvous" table
+            $sql = "INSERT INTO rendezvous (LaDate, idclient, status, idp, iddoc) 
+                    SELECT :LaDate, idclient, :status, :idp, :iddoc
+                    FROM user 
+                    WHERE idclient = :idclient 
+                    AND type = 'Patient'";
+
+            $conn = $db->prepare($sql);
+
+            $conn->bindValue(":LaDate", $rdv->getLaDate());
+            $conn->bindValue(":idclient", $_SESSION['idclient']);
+            $conn->bindValue(":status", 0); // set status to 0 by default
+            $conn->bindValue(":idp", $idp);
+            $conn->bindValue(":iddoc", $doctorId);
+
+            $conn->execute();
+
+            return true;
+        } else {
+            // No matching planning row was found
+          //  echo '<div class="alert alert-danger">' . "Aucun planning ne correspond à la date et à l'heure demandées." . '</div>';
+
+            return false;
+        }
+    } catch (Exception $e) {
+        echo 'Error: ' . $e->getMessage();
+        return false;
+    }
+}
 
 
         

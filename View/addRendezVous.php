@@ -18,33 +18,56 @@ if(isset($_SESSION['idclient'])){
 
 
 //var_dump($_POST);
+if(isset($_POST['ajouter']) )
+{
+  $LaDate = $_POST['LaDate'];
 
-    if(isset($_POST['ajouter']) )
+  // Convertit la date en objet DateTime
+  $dateObj = new DateTime($LaDate);
+  
+  // Récupère le jour de la semaine de la date
+  $jour = $dateObj->format('l');
+  
+  $temps = $dateObj->format('H:i:s');
+
+  // Affiche les résultats
+  //echo "Jour : " . $jour . "<br>";
+  //echo "Temps : " . $temps;
+  
+    $doctorId = $_POST['doctor-id'];
+    if (!empty($LaDate) && !empty($doctorId))
     {
-        $LaDate = $_POST['LaDate'];
-        $doctorId = $_POST['doctor-id'];
-        if (!empty($LaDate) && !empty($doctorId))
+        $rdv = new Rendezvous($LaDate);
+        $rdvC = new RendezvousC();
+        if(!$rdvC->checkRendezvousExists($rdv))
         {
-            $rdv = new Rendezvous($LaDate);
-            $rdvC = new RendezvousC();
-            if(!$rdvC->checkRendezvousExists($rdv))
-            {
-                if ($rdvC->addRendezvous($rdv, $doctorId)) {
-                    // Afficher un message de succès si l'ajout a réussi
-                    echo "Le rendez-vous a été ajouté avec succès !";
-                } else {
-                    // Afficher un message d'erreur si l'ajout a échoué
-                    echo "Une erreur est survenue lors de l'ajout du rendez-vous.";
-                }
-            }
+          if ($rdvC->addRendezvous($rdv, $doctorId, $jour, $temps)) {
+            // Afficher un message de succès si l'ajout a réussi
+            echo '<div class="notif notif-succ">'."Le rendez-vous a été ajouté avec succès !".'</div>';
+    echo '<script>document.querySelector(".notif-succ").style.display = "block";</script>';
+        } else {
+            // Afficher un message d'erreur si l'ajout a échoué
+            echo '<div class="alert alert-danger">'."Aucun planning ne correspond à la date et à l'heure demandées.".'</div>';
+            echo '<script>document.querySelector(".alert-danger").style.display = "block";</script>';
         }
-        else {
-            // Afficher un message d'erreur si l'un des champs est vide
-            echo "Veuillez remplir tous les champs.";
+        
         }
     }
+    else {
+        // Afficher un message d'erreur si l'un des champs est vide
+        echo "Veuillez remplir tous les champs.";
+    }
+}
 
+if(isset($_GET['doctorId'])) {
+  // Récupérer l'identifiant du médecin
+  $doctorId = $_GET['doctorId'];
 
+  // Connexion à la base de données
+
+  
+ 
+}
 
 
 
@@ -67,6 +90,8 @@ if(isset($_SESSION['idclient'])){
 
   <meta content="" name="description">
   <meta content="" name="keywords">
+
+  <script src="y/View/schedule.js"></script>
 
   <!-- Favicons -->
   <link href="assets/img/favicon.png" rel="icon">
@@ -94,6 +119,8 @@ if(isset($_SESSION['idclient'])){
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
+
+ 
 </head>
 
 <body>
@@ -229,31 +256,214 @@ if(isset($_SESSION['idclient'])){
   </main><!-- End #main -->
 
  
-    <hr>
 
-    <div id="error">
-        <?php echo $error; ?>
-    </div>
-  
+
     <?php
 $db = config::getConnexion();
-$sql = "SELECT idclient,nom, prenom FROM user WHERE type = 'Doctor'";
+$sql = "SELECT idclient,nom, prenom,specialite,adresse FROM user WHERE type = 'Doctor'";
 $result = $db->query($sql);
+
+
+?>
+
+<?php
+$db = config::getConnexion();
+$sqlSpecialites = "SELECT DISTINCT specialite FROM user WHERE type = 'Doctor'";
+$resultSpecialites = $db->query($sqlSpecialites);
+$sqlAdresses = "SELECT DISTINCT adresse FROM user WHERE type = 'Doctor'";
+$resultAdresses = $db->query($sqlAdresses);
+
+
+
+  // Requête SQL pour obtenir les adresses pour chaque spécialité
+  $sql = "SELECT specialite, adresse FROM user ORDER BY specialite, adresse";
+  $stmt = $db->query($sql);
+
+  // Parcourir les résultats de la requête et stocker les adresses pour chaque spécialité dans un tableau associatif
+  $adressesParSpecialite = array();
+  while ($row = $stmt->fetch()) {
+    $specialite = $row['specialite'];
+    $adresse = $row['adresse'];
+
+    if (!isset($adressesParSpecialite[$specialite])) {
+      $adressesParSpecialite[$specialite] = array();
+    }
+
+    $adressesParSpecialite[$specialite][] = $adresse;
+  }
 ?>
 
 <!-- Affichage des médecins et du formulaire -->
 <div>
+
+  <form class="filtre" method="get" action="">
+  <label for="specialite">Spécialité :</label>
+  <br>
+<select id="specialite" name="specialite">
+  <option value="" disabled selected>Choisissez une spécialité</option>
+  <?php while ($row = $resultSpecialites->fetch()) { ?>
+    <option value="<?php echo $row['specialite']; ?>"><?php echo $row['specialite']; ?></option>
+  <?php } ?>
+</select>
+<br>
+<label for="adresse">Adresse :</label> <br>
+<select id="adresse" name="adresse">
+  <option value="" disabled selected>Choisissez une adresse</option>
+  <?php while ($row = $resultAdresses->fetch()) { ?>
+    <option value="<?php echo $row['adresse']; ?>"><?php echo $row['adresse']; ?></option>
+  <?php } ?>
+</select>
+
+<script>
+  const specialiteSelect = document.getElementById("specialite");
+  const adresseSelect = document.getElementById("adresse");
+  const adresses = <?php echo json_encode($adressesParSpecialite); ?>;
+
+  specialiteSelect.addEventListener("change", () => {
+    const selectedSpecialite = specialiteSelect.value;
+    adresseSelect.innerHTML = '<option value="" disabled selected>Choisissez une adresse</option>';
+
+    if (selectedSpecialite in adresses) {
+      adresses[selectedSpecialite].forEach(adresse => {
+        const option = document.createElement("option");
+        option.value = adresse;
+        option.textContent = adresse;
+        adresseSelect.appendChild(option);
+      });
+    }
+  });
+</script>
+
+<br><br>
+    <input type="submit" value="Rechercher">
+  </form>
+
+  <?php
+  if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+   @ $specialite = $_GET['specialite'];
+    @$adresse = $_GET['adresse'];
+
+    $db = config::getConnexion();
+    $sql = "SELECT idclient,nom, prenom,specialite,adresse FROM user WHERE type = 'Doctor'";
+
+    if (!empty($specialite)) {
+      $sql .= " AND specialite = '$specialite'";
+    }
+
+    if (!empty($adresse)) {
+      $sql .= " AND adresse = '$adresse'";
+    }
+
+    $result = $db->query($sql);
+    ?>
+
+ 
+
     <?php while ($row = $result->fetch()) { 
         $doctorId = $row['idclient'];
         $doctorNom = $row['nom'] . ' ' . $row['prenom'];
+        $doctorSpeciality = $row['specialite'];
+        $doctoradd = $row['adresse'];
+      ?>
+        <div id="divmed">
+            <table id="tabled">
+                <td id="tdd" class="doctor-name">
+                <br><br><br><br>
+                    <img src="../View/images/d1.jpg" alt="<?php echo $doctorNom; ?>">
+
+
+<br><br><br><br><br>
+
+                    <p>Name : <b>Dr. <?php echo $doctorNom; ?></b></p>
+                    <p>Specialite : <b>  <?php echo $doctorSpeciality; ?></b> <p>
+                    <p> Adresse : <b><?php echo $doctoradd; ?></b><p>
+                   
+
+
+                    <button name="appointment-btn" id="appointment-btn" class="make-appointment-btn" data-doctor-id="<?php echo $doctorId; ?>" data-doctor-name="<?php echo $doctorNom; ?>" onclick="addId(<?php echo $doctorId; ?>)">Set Appointment</button>
+                    <?php
+		// votre code PHP ici
+
+        $db = config::getConnexion();
+
+        // Requête SQL pour récupérer le planning du médecin
+        $stmt = $db->prepare("SELECT jour, timeFrom, timeTo FROM planningdr WHERE idClient = :doctorId");
+        $stmt->bindParam(':doctorId', $doctorId);
+        $stmt->execute();
+    
+        // Afficher le planning du médecin
+        if ($stmt->rowCount() > 0) {
+            echo "<h3>Planning du médecin :</h3>";
+            echo "<table><tr><th>Day</th><th>timeFrom</th><th> timeTo</th></tr>";
+            while($row = $stmt->fetch()) {
+                echo "<tr><td>" . $row["jour"] . "</td><td>" . $row["timeFrom"] . "</td><td>" . $row["timeTo"] . "</td></tr>";
+            }
+            echo "</table>";
+        } else {
+            echo "<p>Aucun planning trouvé pour ce médecin.</p>";
+        }
+    
+        $conn = null;
+	?>
+
+                </td>
+            </table>
+        </div>
+    <?php } ?>
+  <?php } ?>
+</div>
+
+
+
+
+<!-- Affichage des médecins et du formulaire -->
+<div>
+<?php while ($row = $result->fetch()) { 
+        $doctorId = $row['idclient'];
+        $doctorNom = $row['nom'] . ' ' . $row['prenom'];
+        $doctorSpeciality = $row['specialite'];
+        $doctoradd = $row['adresse'];
     ?>
         <div>
             <table id="tabled">
                 <td id="tdd" class="doctor-name">
+                <br><br><br><br>
                     <img src="../View/images/d1.jpg" alt="<?php echo $doctorNom; ?>">
-                    <h3>Dr. <?php echo $doctorNom; ?></h3>
-                    <p>Cardiologist</p>
-                    <button name="appointment-btn" id="appointment-btn" class="make-appointment-btn" data-doctor-id="<?php echo $doctorId; ?>" data-doctor-name="<?php echo $doctorNom; ?>" onclick="addDoctorId(<?php echo $doctorId; ?>)">Set Appointment</button>
+
+
+<br><br><br><br><br>
+
+                    <p>Name : <b>Dr. <?php echo $doctorNom; ?></b></p>
+                    <p>Specialite : <b>  <?php echo $doctorSpeciality; ?></b> <p>
+                    <p> Adresse : <b><?php echo $doctoradd; ?></b><p>
+    
+
+
+                    <button name="appointment-btn" id="appointment-btn" class="make-appointment-btn" data-doctor-id="<?php echo $doctorId; ?>" data-doctor-name="<?php echo $doctorNom; ?>" onclick="addId(<?php echo $doctorId; ?>)">Set Appointment</button>
+                    <?php
+		// votre code PHP ici
+
+        $db = config::getConnexion();
+
+        // Requête SQL pour récupérer le planning du médecin
+        $stmt = $db->prepare("SELECT jour, timeFrom, timeTo FROM planningdr WHERE idClient = :doctorId");
+        $stmt->bindParam(':doctorId', $doctorId);
+        $stmt->execute();
+    
+        // Afficher le planning du médecin
+        if ($stmt->rowCount() > 0) {
+            echo "<h3>Planning du médecin :</h3>";
+            echo "<table><tr><th>Day</th><th>timeFrom</th><th> timeTo</th></tr>";
+            while($row = $stmt->fetch()) {
+                echo "<tr><td>" . $row["jour"] . "</td><td>" . $row["timeFrom"] . "</td><td>" . $row["timeTo"] . "</td></tr>";
+            }
+            echo "</table>";
+        } else {
+            echo "<p>Aucun planning trouvé pour ce médecin.</p>";
+        }
+    
+        $conn = null;
+	?>
                 </td>
             </table>
         </div>
@@ -268,11 +478,66 @@ $result = $db->query($sql);
 
 
 
+<!-- Affichage des médecins et du formulaire
+<script> 
+
+
+// Récupérer les éléments nécessaires du DOM
+const popupBtns = document.querySelectorAll('.popup');
+const modall = document.querySelector('.modall');
+const modallContent = document.querySelector('.modall-content');
+const sBtn = document.getElementById('#s-btn');
+
+
+
+// Fonction pour afficher la fenêtre modale
+function showModal(doctorId) {
+  // Faire une requête AJAX pour récupérer le planning du médecin à partir de DoctorSchedule.php
+  const xhr = new XMLHttpRequest();
+  xhr.open('GET', 'DoctorSchedule.php?id=' + doctorId);
+  xhr.onload = function() {
+    if (xhr.status === 200) {
+      // Afficher le planning du médecin dans la fenêtre modale
+      modallContent.innerHTML = xhr.responseText;
+      modall.style.display = 'block';
+    } else {
+      // Gérer l'erreur
+      console.log('Une erreur s\'est produite: ' + xhr.status);
+    }
+  };
+  xhr.send();
+}
+
+// Fonction pour masquer la fenêtre modale
+function hideModall() {
+modall.style.display = 'none';
+}
+
+// Ajouter un écouteur d'événement au bouton pour afficher la fenêtre modale
+popupBtns.forEach((btn) => {
+btn.addEventListener('click', () => {
+showModal();
+});
+});
+
+// Ajouter un écouteur d'événement au bouton de validation pour enregistrer les données et masquer la fenêtre modale
+
+
+// Ajouter un écouteur d'événement au bouton de fermeture pour masquer la fenêtre modale
+
+
+
+// Ajouter un écouteur d'événement à la fenêtre modale pour la masquer si l'utilisateur clique à l'extérieur de la fenêtre
+// Ajouter un écouteur d'événement à la fenêtre modale pour la masquer si l'utilisateur clique à l'extérieur de la fenêtre
 
 
 
 
+ </script>
 
+
+
+-->
 
 
 
@@ -285,6 +550,87 @@ $result = $db->query($sql);
 
 
     <style>
+
+.notif {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.notif-succ {
+    color: white;
+    background-color: green;
+    border-color:light green ;
+}
+
+
+      .alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.alert-danger {
+    color: #a94442;
+    background-color: #f2dede;
+    border-color: #ebccd1;
+}
+
+
+
+/* Styles pour l'élément select */
+.filtre select {
+  width: 15%;
+  padding: 9px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 16px;
+  font-family: sans-serif;
+  appearance: none; /* Supprime le style de base du navigateur */
+  background-color: #fff;
+  background-image: url("path/to/arrow.svg"); /* Ajoutez une flèche personnalisée */
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  cursor: pointer;
+  margin-left: 5px; /* Réduire la marge gauche entre l'élément "filtre" et l'élément "select" */
+}
+
+/* Styles pour l'option sélectionnée */
+option:checked {
+  background-color: #0070f3;
+  color: #fff;
+}
+
+/* Styles pour les options */
+option {
+  background-color: #fff;
+  color: #333;
+  font-size: 14px; /* Réduire la taille de police */
+  font-family: sans-serif;
+  text-align: left; /* Aligner le texte vers la gauche */
+}
+
+.filtre {
+ 
+
+  flex-direction: row; /* Afficher les éléments en ligne */
+}
+
+
+.filtre label {
+  flex-basis: 45%;
+  margin-right: 10px; /* Réduire la marge droite entre les éléments */
+}
+
+.filtre label {
+  margin-bottom: 10px;
+  margin-right: 5px; /* Réduire la marge droite entre le label et le select */
+}
+
+
 
 
 #tabadd{
@@ -329,7 +675,7 @@ $result = $db->query($sql);
     background-color:#88e0d5; 
   }
 
-    form {
+    #myform {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -340,13 +686,20 @@ $result = $db->query($sql);
         padding: 1rem;
     }
 
-    #tabled {
+
+#tabled {
   border-collapse: collapse;
   width: 50%;
   margin: 0 auto;
   table-layout: fixed;
   font-family: Arial, sans-serif;
 }
+
+#divmed {
+  display: flex;
+  align-items: flex-start;
+}
+
 
 th, #tdd {
   padding: 1rem;
@@ -356,10 +709,11 @@ th, #tdd {
 }
 
 th {
-  background-color: #8BC34A;
+  background-color: darkorange;
   color: white;
   font-weight: bold;
   text-transform: uppercase;
+  width:30%;
 }
 
 tr:nth-child(2n) td {
@@ -551,7 +905,6 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator {
 
 
 
-
 <div>
   
   <div class="modal">
@@ -560,24 +913,74 @@ input[type=datetime-local]::-webkit-calendar-picker-indicator {
 
     
     <!-- Formulaire pour prendre un rendez-vous -->
-    <form id="myform" method="POST" action="">
+    <form id="myform" method="POST" action="" onsubmit="return  validateForm()">
        
             <input type="hidden" name="doctor-id" id="doctor-id" value="">
+
+
+
           
                <label>Date:</label>
                 <input type="datetime-local" name="LaDate" id="LaDate">
-           
+                <span id="error1" style="display:none;"></span>
            
               <button type="submit" name="ajouter" id="set-appointment-btn"  class="btn-primary">Valider</button>
-                <button id="closeBtn" class="btn-secondary">Close</button>
          
     
     </form>
+    <style>
+    #closeBtn {
+  display: block; /* to make the link a block element */
+  text-align: center; /* to center the link horizontally */
+  margin-top: 20px; /* to add some space between the link and other elements */
+}
+</style>
+    <a  id="closeBtn" class="btn-secondary" href="addRendezVous.php">Close</a>
+
 </div>
+
+
+<script>
+function validateForm() {
+  var dateInput = document.getElementById("LaDate").value;
+  var error1 = document.getElementById("error1");
+  
+  // Check if the date is in the correct format (YYYY-MM-DDThh:mm)
+  var regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+  if (!regex.test(dateInput)) {
+    error1.innerHTML = "Invalid date format. Please enter date in format YYYY-MM-DDThh:mm.";
+    error1.style.display = "block";
+    error1.style.display = "inline";
+    error1.style.color = "red";
+    return false;
+  }
+  
+  // Check if the date is a valid date
+  var date = new Date(dateInput);
+  if (isNaN(date.getTime())) {
+    error1.innerHTML = "Invalid date. Please enter a valid date.";
+    error1.style.display = "block";
+    error1.style.display = "inline";
+    error1.style.color = "red";
+    return false;
+  }
+  
+  // If the date input is valid, hide the error message and submit the form
+  error1.style.display = "none";
+  return true;
+}
+
+</script>
+
+
+
+
+
+
 
 <script>
     // Fonction pour ajouter l'ID du médecin sélectionné dans le champ caché
-    function addDoctorId(doctorId) {
+    function addId(doctorId) {
         document.getElementById("doctor-id").value = doctorId;
     }
 </script>

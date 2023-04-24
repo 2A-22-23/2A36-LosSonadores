@@ -7,12 +7,23 @@ class Rendezvous {
     private $idr;
     private $status;
     private $iddoc;
+    private $idp;
+
+
+    public function getIdp() {
+        return $this->idp;
+    }
+
+    public function setIdp($idp) {
+        $this->idp = $idp;
+    }
+
     
     public function __construct( $LaDate) {
        
         $this->LaDate = $LaDate;
     }
-    
+
     
     
     public function getNomPatient() {
