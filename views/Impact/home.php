@@ -107,7 +107,7 @@ if(isset($_SESSION['idclient'])){
           <li><a href="#contact">Contact</a></li>
             
 
-          <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
+          <li class="dropdown"><a href="#"> <img src="<?= $fetch_profile["image"]; ?>" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" > <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
           <ul>
                   <li><a href="show_user.php">Show your account infos</a></li>
                   <li><a href="update.php">Update your account</a></li>

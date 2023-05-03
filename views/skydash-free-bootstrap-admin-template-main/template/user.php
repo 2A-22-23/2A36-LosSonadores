@@ -305,6 +305,30 @@
         </ul>
       </nav>
       <!-- partial -->
+
+      <?php
+$pdo = new  PDO('mysql:host=localhost;dbname=user01', 'root', '');
+
+// Get number of rows in table
+$query_count = "SELECT COUNT(*) AS num_rows FROM user";
+$stmt_count = $pdo->prepare($query_count);
+$stmt_count->execute();
+$num_rows = $stmt_count->fetchColumn();
+
+// Set page limit and current page
+$limit = 4;
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Calculate offset for current page
+$offset = ($page - 1) * $limit;
+
+// Get rows for current page
+$query = "SELECT * FROM user LIMIT $limit OFFSET $offset";
+$stmt = $pdo->prepare($query);
+$stmt->execute();
+$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+?>
     
           <div class="row">
             <div class="col-md-12 grid-margin stretch-card">
@@ -322,7 +346,7 @@
                         <th>email</th>
                         <th>type</th>
                         <th>username</th>
-                      
+                        <th>code de patient</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -342,14 +366,25 @@
                           echo '<td>' . $row['email'] . '</td>';
                           echo '<td>' . $row['type'] . '</td>';
                           echo '<td>' . $row['login'] . '</td>';
-                     
+                          echo '<td>' . $row['code0'] . '</td>';
+
                           echo '
                                 </tr>';
+                              
+                             
                           
                         }
                       ?>
                     </tbody>
+                  
                   </table>
+                  <?php
+          $num_pages = ceil($num_rows / $limit);
+          // Display pagination links
+          for ($i = 1; $i <= $num_pages; $i++) {
+            echo '<a class="pagination-link" href="?page=' . $i . '">' . $i . '</a> ';
+          }
+        ?>
                 </div>
                
               </div>
@@ -360,8 +395,102 @@
          
         </div>
 
-       
+        <style>
+          #search-ido {
+  padding: 10px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  width: 300px;
+  margin-bottom: 20px;
+  outline: none;
+}
 
+          .pagination-link {
+    display: inline-block;
+    padding: 5px 10px;
+    background-color: #f2f2f2;
+    border: 1px solid #ccc;
+    margin-right: 5px;
+}
+
+.pagination-link:hover {
+    background-color: #ddd;
+}
+
+.pagination-link.active {
+    background-color: #4CAF50;
+    color: white;
+    border: 1px solid #4CAF50;
+}
+ .search-input {
+    width: 200px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    outline: none;
+  }
+
+        </style>
+
+
+
+
+
+
+<div class="container-fluid pt-4 px-4">
+                <div class="row g-4">
+                    <div class="col-sm-12 col-xl-6">
+                        <div class="bg-secondary rounded h-100 p-4" style="height: 800px; width: 650px;">
+                            <h6 class="mb-4">Users</h6>
+                            <div id="pie-chart" class="chart-container" style="height: 400px; width: 600px;"></div>
+                        </div>
+                    </div>
+                </div>
+</div>
+
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<script type="text/javascript">
+  google.charts.load('current', {'packages''corechart']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart() {
+    var data = google.visualization.arrayToDataTable([
+      ['Client', 'Etat'],
+      ['Blocked', <?php echo $client->recupererClientByEtat("Bloquer")->rowCount(); ?>],
+      ['Verified', <?php echo $client->recupererClientByEtat("Verified")->rowCount(); ?>],
+      ['Not Verified', <?php echo $client->recupererClientByEtat("Non Vérifé")->rowCount(); ?>]
+    ]);
+
+    var options = {
+      title: '',
+      backgroundColor: '#191C24',
+      pieSliceTextStyle: {
+        color: 'white'
+      },
+      pieSliceText: 'none', // hide percentage values
+
+      colors: ['#b22222', '#EB1616', '#c90016'],
+      legend: {
+      position: 'top',
+      alignment: 'center',
+      textStyle: {
+        color: 'gray'
+      },
+      markerShape: 'square', // display color indicators as squares
+      markerBorderColor: 'white', // set the border color to white
+    },
+    markerShape: 'square', // display color indicators as squares
+      markerBorderColor: 'white' // set the border color to white
+      
+    };
+
+    var chart = new google.visualization.PieChart(document.getElementById('pie-chart'));
+    chart.draw(data, options);
+  }
+</script>
                       </body>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
@@ -372,6 +501,7 @@
           </div>
         </footer>
         <!-- partial -->
+
       </div>
       <!-- main-panel ends -->
     </div>

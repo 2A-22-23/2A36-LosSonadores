@@ -15,7 +15,7 @@ if(isset($_SESSION['idclient'])){
 if(isset($_POST['submit'])){
    $email = $_POST['email'];
    $code = $_POST['code'];
-   var_dump($_POST);
+ 
    $db = config::getConnexion();
    $stmt = $db->prepare("SELECT idclient, verif, code FROM user WHERE email = ?");
    $stmt->execute([$email]);

@@ -75,24 +75,36 @@ if(isset($_POST['enter'])){
         $email = $_POST['email'];
         $mdp = $_POST['mdp'];
         $db = config::getConnexion();
-        $stmt = $db->prepare("SELECT idclient, mdp ,verif FROM user WHERE email = ?");
+        $stmt = $db->prepare("SELECT idclient, mdp ,verif,block FROM user WHERE email = ?");
         $stmt->execute([$email]);
         $row = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($row && password_verify($mdp, $row['mdp']) && $row['verif'] == 1) {           
+        if ($row && password_verify($mdp, $row['mdp']) && $row['verif'] == 1 && ($row['block'] == 0)) {           
             $_SESSION['idclient'] = $row['idclient'];         
             header('location:home.php');     
         } else if($email=="adminvitalia@gmail.com" && $mdp == "wiem") {
+            
             header('location:../skydash-free-bootstrap-admin-template-main/template/back.php'); }
             else if    ($row['verif'] == 0) 
             {
+
                 echo "<script>alert('Please verify that your account !');</script>";
             }
+            elseif ($row['block'] == 1)
+            {
+                echo "<script>alert('You are blocked!');</script>";
+
+            }
         } else {
-            echo "<script>alert('Please verify that you have put the right email and password');</script>";
+            echo "<script>alert('Please verify that you are not a robot!');</script>";
+
+
         }
-    } else {
+    }
+else 
+    {
         // The reCAPTCHA verification failed, show an error message
-        echo "<script>alert('Please verify that you are not a robot!');</script>";
+        echo "<script>alert('Please verify that you have put the right email and password');</script>";
+        header('location:home.php'); 
     }
 
 

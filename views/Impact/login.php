@@ -91,7 +91,7 @@ if(isset($_SESSION['idclient'])){
           <div class="title">Signup</div>
 
 
-   <form id="registration-form" action="register_core.php" method="post"  onsubmit="return Validate(this)" name="register" >
+   <form enctype="multipart/form-data" id="registration-form" action="register_core.php" method="post"  onsubmit="return Validate(this)" name="register" >
       
    <div class="input-boxes">
               <div class="input-box">
@@ -110,9 +110,11 @@ if(isset($_SESSION['idclient'])){
         <div class="input-boxes">
               <div class="input-box">
                 <i class="fas fa-user"></i>
-      <input type="file" name="image"  placeholder="enter your image" >
-              </div>
-
+                
+      <input type="file" name="image" id="image"    placeholder="enter your image" >
+               
+    </div>
+              
         <div class="input-box">
                 <i class="fas fa-phone"></i>
                 <input type="text" name="telephone"  id="telephone"  placeholder="enter your number"  onkeyup="checkPhone()" />

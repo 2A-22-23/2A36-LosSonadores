@@ -6,7 +6,7 @@ class clientc
 {
 function ajouter_client ($client)
 {
-$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,image,code) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:image,:code) ";
+$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,code) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:code) ";
 $db=config::getConnexion();
 $mdp = $client->getMdp();
 $mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
@@ -22,7 +22,6 @@ try
     $email = $client->getemail();
     $adresse = $client->getadresse();
     $type=$client->getType();
-    $image=$client->getImage();
     $code=$client->getCode();
     
     $req->bindValue(':login',$login);
@@ -33,7 +32,6 @@ try
     $req->bindValue(':telephone', $telephone); 
     $req->bindValue(':email', $email);
     $req->bindValue(':adresse', $adresse);
-    $req->bindValue(':image',$image);
 
     $req->bindValue(':code',$code);
     $req->execute();
@@ -48,6 +46,22 @@ catch (Exception $e) {
 }
 }
 
+function ajouterClientimg($email,$image)
+{
+    $sql="UPDATE user SET image=:image WHERE email=:email";
+    $db = config::getConnexion();
+    try
+        {
+        $req=$db->prepare($sql);
+        $req->bindValue(':email',$email);
+        $req->bindValue(':image',$image);
+        $req->execute();
+        }
+    catch (Exception $e)
+        {
+            echo 'Erreur: '.$e->getMessage();
+        }
+    }
 
 function deleteClient($id)
     {
@@ -156,10 +170,7 @@ function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$md
     $mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
     try {
         $con = config::getConnexion();
-        $sql = "UPDATE user set 
-                    nom= '$nom',prenom='$prenom',
-                    telephone='$telephone',adresse='$adresse',
-                     email='$email',login='$login',mdp='$mdp_hash',type='$type',image='$image',code='$code' WHERE idclient='$id'";
+        $sql = "UPDATE user set nom= '$nom',prenom='$prenom',  telephone='$telephone',adresse='$adresse', email='$email',login='$login',mdp='$mdp_hash',type='$type',image='$image', code=''$code'' WHERE idclient='$id'";
     
         $stmt = $con->query($sql);
     }
@@ -168,21 +179,7 @@ function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$md
     }
 }
 
-function verifier_client($login,$mdp)
-{   
-    $query ="SELECT * from user where login=:login and mdp=:mdp";
-   
-    $db = config::getConnexion();
-    try {
-        $req = $db->prepare($query);
-        $req->bindValue(':login', $login);
-        $req->bindValue(':mdp', $mdp);
-        $req->execute();
-        return $req->fetchAll();
-    } catch (Exception $e) {
-        die('Erreur: ' . $e->getMessage());
-    }
-}
+
 
 
    

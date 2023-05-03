@@ -23,7 +23,7 @@ if(isset($_SESSION['idclient'])){
 
 if(isset($_POST['email']) && isset($_POST['submit'])) {
     $email = $_POST['email'];
-    
+    $msg="";
     $db = config::getConnexion();
     
     //using prepared statements to prevent SQL injection attacks
@@ -48,8 +48,12 @@ if(isset($_POST['email']) && isset($_POST['submit'])) {
       
         header('Location:login.php'); //redirecting to the login page with a success message if the password reset is successful
         echo "<script>alert('Check you mail for your new password');</script>";
+        $msg = "<div class='alert alert-success'>Account verification has been successfully completed.</div>";
+
     } else {
        header('Location:forget_pass.php?error=email_not_found'); //redirecting to the forget password page with an error message if the email is not found in the database
+       $msg = "<div class='alert alert-success'>Account verification has been successfully completed.</div>";
+
     }
 } else {
     header('Location:forget_pass.php'); //redirecting to the forget password page if the email field is missing

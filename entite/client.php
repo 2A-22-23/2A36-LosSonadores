@@ -28,20 +28,7 @@ function __construct($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$
 	$this->code=$code;
 }
 
-function __construct1($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image)
-{
 
-    $this->nom=$nom;
-    $this->prenom=$prenom;
-	$this->type=$type;
-    $this->telephone=$telephone;
-    $this->adresse=$adresse;
-    $this->email=$email;
-    $this->login=$login;
-    $this->mdp=$mdp;
-	$this->image=$image;
-
-}
 
 
 public function getMdp() {

@@ -32,17 +32,21 @@ if(isset($_POST['submit']))
    
     
     $type = $_POST['type'];
-    $image = $_POST['image'];
+
     $code = $_POST['code'];
+    $filename = $_FILES["image"]["name"];
+   $tempname = $_FILES["image"]["tmp_name"];
+
+$folder = "../images/".$filename ;
+move_uploaded_file($tempname, $folder);
     
-    $db = config::getConnexion();
   
 
     
-   $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code);
+   $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$folder,$code);
          $clientc = new clientc();
          
-         $clientc->updateUser($idclient,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code);
+         $clientc->updateUser($idclient,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$folder,$code);
  
  
          echo "<script>alert('modifiee ');</script>";
@@ -127,7 +131,6 @@ if(isset($_POST['submit']))
         $select_profile->execute([$idclient]);
         if($select_profile->rowCount() > 0){
         $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-        $image = base64_encode($fetch_profile['image']);
 
      ?>
      
@@ -146,14 +149,8 @@ if(isset($_POST['submit']))
 
       <li><a href="home.php">Home</a></li>
       <li><a href="#about">About</a></li>
-      <li><a href="#services">Services</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#team">Team</a></li>
-      <li><a href="blog.html">Blog</a></li>
-      <li><a href="#contact">Contact</a></li>
-        
-
-      <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?> </span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
+  
+      <li class="dropdown"><a href="#"> <img src="<?= $fetch_profile["image"]; ?>" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" > <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
       <ul>
               <li><a href="show_user.php">Show your account infos</a></li>
               <li><a href="#">Update your account</a></li>
@@ -173,64 +170,69 @@ if(isset($_POST['submit']))
 </header><!-- End Header -->
 
    <div>
-   <style>
-  /* Main container */
-  .container01 {
-    margin: 0 auto;
-    max-width: 600px;
-    padding: 20px;
-    background-color: #f0f8ff;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  /* Headings */
-  h2 {
-    color: #006400;
-    margin-bottom: 20px;
-  }
-  
-  /* Labels */
-  label {
-    display: block;
-    margin-bottom: 10px;
-    color: #006400;
-    font-weight: bold;
-  }
-  
-  /* Form fields */
-  input[type="text"],
-  input[type="password"],
-  input[type="email"],
-  select {
-    display: block;
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-  }
-  
-  /* Submit button */
-  input[type="submit"] {
-    background-color: #006400;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  input[type="submit"]:hover {
-    background-color: #228B22;
-  }
+  <style>
+
+    /* Main container */
+.container01 {
+  margin: 0 auto;
+
+  max-width: 600px;
+  padding: 20px;
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Headings */
+.container01 h2 {
+  color: #006400;
+  margin-bottom: 20px;
+}
+
+/* Labels */
+.container01 label {
+  display: block;
+  margin-bottom: 10px;
+  color: #006400;
+  font-weight: bold;
+}
+
+/* Form fields */
+.container01 input[type="text"],
+.container01 input[type="password"],
+.container01 input[type="email"],
+.container01 select {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  border: 1px solid #e0e0e0;
+}
+
+/* Submit button */
+.container01 input[type="submit"] {
+  background-color: #006400;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.container01 input[type="submit"]:hover {
+  background-color: #228B22;
+}
+
   
 </style>
 
 <div class="container01">
   <h2>Update your personal information</h2>
 
-  <form method="POST" action="">
+  <form method="POST" action="" enctype="multipart/form-data">
     <label for="nom">First Name:</label>
     <input type="text" name="nom" id="nom" value="<?= $fetch_profile["nom"]; ?>">
 
@@ -238,17 +240,15 @@ if(isset($_POST['submit']))
     <input type="text" name="prenom" id="prenom" value="<?= $fetch_profile["prenom"]; ?>">
 
     <label for="image">Profile Picture:</label>    
-    <?php if ($image) :    ?>
+  
         
-        <li><img src="data:image/jpeg;base64,<?= $image ?>" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;"></li>
-        <?php endif; ?>  
+        <li><img src="<?= $fetch_profile["image"]; ?>" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;" ></li>
+      
         <br>
-    <input type="file" name="image" placeholder="enter your image">
+        <input type="file" name="image" id="image" placeholder="enter your image">
    <br>
    <br>
 
-
-   <input type="hidden" name="code" id="code" value="<?= $fetch_profile["code"]; ?>">
 
 
     <label for="telephone">Your Number:</label>
@@ -270,6 +270,8 @@ if(isset($_POST['submit']))
       <option value="Pharmacist">Pharmacist</option>
       <option value="Patient">Patient</option>
     </select>
+
+   <input hidden type="text" name="code" id="code" value="<?= $fetch_profile["code"]; ?>">
 
 
     <label for="password">New Password:</label>

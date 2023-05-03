@@ -183,7 +183,7 @@ main {
     
         
 
-      <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
+      <li class="dropdown"><a href="#"> <img src="<?= $fetch_profile["image"]; ?>" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;" > <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
       <ul>
               <li><a href="show_user.php">Show your account infos</a></li>
               <li><a href="update.php">Update your account</a></li>
@@ -210,8 +210,7 @@ main {
         $select_profile->execute([$idclient]);
         if($select_profile->rowCount() > 0){
         $fetch_profile = $select_profile->fetch(PDO::FETCH_ASSOC);
-     
-        $image = base64_encode($fetch_profile['image']);
+   
      ?>
      
      
@@ -227,10 +226,9 @@ main {
         <h2>Your personal information</h2>
         <ul>
 
-        <?php if ($image) :    ?>
         
-            <li>Image: <img src="image/<?= $image ?>" alt="Profile Image"></li>
-        <?php endif; ?>
+            <li><strong>Your image:</strong>  <img src="<?= $fetch_profile["image"]; ?>" style="width: 100px; height: 100px; border-radius: 50%; object-fit: cover;" ></li>
+    
         <li><strong>Username:</strong> <?= $fetch_profile["login"]; ?></li>
           <li><strong>Your code:</strong> <?= $fetch_profile["code0"]; ?></li>
           <li><strong>Firstname:</strong> <?= $fetch_profile["nom"]; ?></li>

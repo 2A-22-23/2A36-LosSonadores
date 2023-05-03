@@ -105,7 +105,7 @@ if(isset($_POST['submit'])){
   
    $email = $_POST['email'];
    $email = filter_var($email, FILTER_SANITIZE_EMAIL);
-   
+ 
 
    $mdp = $_POST['mdp'];
    $code = $db->quote(md5(rand()));
@@ -118,14 +118,20 @@ if(isset($_POST['submit'])){
    
    $type = $_POST['type'];
    $type = filter_var($type, FILTER_SANITIZE_STRING);
-  $image = $_POST['image'];
     // Handle image upload
+
+   $filename = $_FILES["image"]["name"];
+   $tempname = $_FILES["image"]["tmp_name"];
+
+$folder = "../images/".$filename ;
+move_uploaded_file($tempname, $folder);
+    
   
-  
-     $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code);
+     $client = new client($nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp, $folder,$code);
         $clientc = new clientc();
         
         $clientc->ajouter_client($client);
+        $clientc->ajouterClientimg($_POST['email'],$folder);
 
          echo "<div style='display: none;'>";
          //Create an instance; passing `true` enables exceptions
@@ -148,7 +154,7 @@ if(isset($_POST['submit'])){
 
           
              //Recipients
-             $mail->setFrom('balsemzakraouii@gmail.com');
+             $mail->setFrom('noreply@vitalia.com', 'Vitalia Support');     //Set who the message is to be sent from
              $mail->addAddress($email);
 
              //Content
@@ -169,5 +175,5 @@ if(isset($_POST['submit'])){
 
 
 
-        //header("Location:login.php");
+       // header("Location:login.php");
     
