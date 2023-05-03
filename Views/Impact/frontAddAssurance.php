@@ -144,7 +144,7 @@ label {
                     </div>
                     <div class="col-md-6">
                          <div class="form-group">
-                             <label for="nom">Assurance type *</label>
+                             <label for="type_assurance">Assurance type *</label>
                               <select id="type_assurance" name="type_assurance" class="form-control"  >
                                 <option value="" selected disabled>--Select Your type--</option>
                                 <option value="Cnss">Cnss</option>
@@ -158,7 +158,7 @@ label {
                
                         <div class="col-md-6">
                         <div class="form-group">
-                            <label for="nom">Assurance Status *</label>
+                            <label for="status_assurance">Assurance Status *</label>
                             <select id="status_assurance" name="status_assurance" class="form-control" >
                                 <option value="" selected disabled>--Select Your status--</option>
                                 <option value="active">Active</option>
@@ -166,6 +166,15 @@ label {
                             </select>
                             
                         </div>
+                    </div>
+                    <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label for="age_assurance">Age *</label>
+                            <input id="age_assurance" type="text" name="age_assurance" class="form-control" placeholder="Please enter your age *"  >
+                            
+                        </div>
+                        <span id="age-error" style="color: red; font-weight: bold;"></span>
                     </div>
 
 
@@ -202,7 +211,7 @@ label {
     var type = document.forms['assurance']['type_assurance']; 
     var status = document.forms['assurance']['status_assurance']; 
     var date = document.forms['assurance']['date_assurance']; 
-
+    var age = document.forms['assurance']['age_assurance']; 
 
 
     function Validate()
@@ -218,6 +227,15 @@ label {
 
         }else{    nom.style.border = "1px solid #5E6E66";}
         
+        if(age.value == "")
+        {
+            age.style.border = "3px solid red";
+            alert("You didnt enter your age!");
+            age.focus();
+            return false;
+
+
+        }else{    nom.style.border = "1px solid #5E6E66";}
         
         if(matricule.value == "")
         {
@@ -269,7 +287,7 @@ label {
 
       // Make an AJAX request to check if the matricule already exists
       const xhr = new XMLHttpRequest();
-      xhr.open('POST', 'check_matriculeremb.php');
+      xhr.open('POST', 'check-matricule.php');
       xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
       xhr.onload = function() {
           if (xhr.status === 200) {

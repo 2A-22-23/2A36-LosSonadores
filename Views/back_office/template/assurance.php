@@ -1,3 +1,7 @@
+<?php
+include 'C:\xampp\htdocs\t_assurance\config.php';
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -312,8 +316,8 @@
       </nav>
       <?php
 
-$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');;
-
+//$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');;
+$pdo = config::getConnexion();
 // Get number of rows in table
 $query_count = "SELECT COUNT(*) AS num_rows FROM t_assurance";
 $stmt_count = $pdo->prepare($query_count);
@@ -321,7 +325,7 @@ $stmt_count->execute();
 $num_rows = $stmt_count->fetchColumn();
 
 // Set page limit and current page
-$limit = 4;
+$limit = 2;
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 
 // Calculate offset for current page
@@ -340,7 +344,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <div class="col-md-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                <input type="text" id="search-ido" placeholder="Search by ID">
+
         <script>
   const searchInput = document.querySelector('#search-ido');
 
@@ -363,36 +367,65 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
   });
 });
 </script>
-                  <table class="styled-table">
-                    <thead>
-                      <tr>
-                        <th>ID</th>
-                        <th>ASSURANCE NAME</th>
-                        <th>MATRICULE </th>
-                        <th>ASSURANCE TYPE</th>
-                        <th>DATE</th>
-                        <th>ASSURANCE STATUS</th>
-                        <th>ACTION</th>
-                      </tr>
-                    </thead>
-                    <?php foreach ($data as $row): ?>
-              <?php if(empty($searchValue) || $row['idd'] === $searchValue): ?>
-                <tr>
-                  <td><?= $row['id_assurance'] ?></td>
-                  <td><?= $row['nom_assurance'] ?></td>
-                  <td><?= $row['matricule_assurance'] ?></td>
-                  <td><?= $row['type_assurance'] ?></td>
-                  <td><?= $row['date_assurance'] ?></td>
-                  <td><?= $row['status_assurance'] ?></td>
-                  <td>
+<!-- <a href="stat.php"><strong>Statistic</strong></a>
+<!-- HTML table -->
+<input type="text" id="search-input" placeholder="Search...">
+<table class="styled-table">
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>ASSURANCE NAME</th>
+      <th>MATRICULE</th>
+      <th>ASSURANCE TYPE</th>
+      <th>DATE</th>
+      <th>ASSURANCE STATUS</th>
+      <th>AGE</th>
+      <th>ACTION</th>
+    </tr>
+  </thead>
+  <tbody id="table-body">
+    <?php foreach ($data as $row): ?>
+      <tr>
+        <td><?php echo $row['id_assurance']; ?></td>
+        <td><?php echo $row['nom_assurance']; ?></td>
+        <td><?php echo $row['matricule_assurance']; ?></td>
+        <td><?php echo $row['type_assurance']; ?></td>
+        <td><?php echo $row['date_assurance']; ?></td>
+        <td><?php echo $row['status_assurance']; ?></td>
+        <td><?php echo $row['age_assurance']; ?></td>
+        
+        <td>
                     <form action="deleteAssurance.php" method="POST">
                       <button type="submit" name="delete" value="<?= $row['id_assurance'] ?>" class="btn btn-danger">Delete</button>
                     </form>
                   </td>
-                </tr>
-              <?php endif; ?>
-            <?php endforeach; ?>
-                  </table>
+        
+      </tr>
+    <?php endforeach; ?>
+  </tbody>
+</table>
+
+<!-- AJAX live search input -->
+<!--<input type="text" id="search-input" placeholder="Search...">  -->
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+  $(document).ready(function() {
+    $('#search-input').on('keyup', function() {
+      var query = $(this).val();
+      $.ajax({
+        url: 'search.php',
+        method: 'POST',
+        data: {
+          query: query
+        },
+        success: function(data) {
+          $('#table-body').html(data);
+        }
+      });
+    });
+  });
+</script>            
                   <?php
           $num_pages = ceil($num_rows / $limit);
           // Display pagination links
@@ -400,6 +433,69 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
             echo '<a class="pagination-link" href="?page=' . $i . '">' . $i . '</a> ';
           }
         ?>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+        #myChart{
+            height:400px !important;
+            width:100% !important;
+        }
+        </style>
+      <div>
+         <canvas id="myChart"></canvas>
+      </div> 
+      <?php
+//$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');
+if (!$pdo) {
+  echo "error ";
+}
+
+$req = $pdo->query("SELECT status_assurance FROM t_assurance");
+$data = $req->fetchAll(PDO::FETCH_ASSOC);
+
+foreach ($data as $row) {
+  $assurances[] = $row['status_assurance'];
+}
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_assurance WHERE status_assurance = 'active'");
+$stmt->execute();
+
+// Get row count
+$active = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_assurance WHERE status_assurance = 'non active'");
+$stmt->execute();
+
+// Get row count
+$nactive = $stmt->fetchColumn();
+
+//var_dump($remboursements);
+?>
+
+      <script>
+  const labels = <?php echo json_encode($assurances)?>;
+  const acive = <?php echo json_encode($active)?>;
+  const nacive = <?php echo json_encode($nactive)?>;
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['active','non active'] ,
+      datasets: [{
+        label: 'status des assurances',
+        data: [acive, nacive],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
                 </div>
               </div>
             </div>
@@ -446,6 +542,7 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
   }
 
         </style>
+        
         <footer class="footer">
           <div class="d-sm-flex justify-content-center justify-content-sm-between">
             <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>

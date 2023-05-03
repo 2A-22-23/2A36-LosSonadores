@@ -7,8 +7,9 @@ class AssuranceM
     private ?string $type_assurance = null;
     private ?string $date_assurance =null;
     private ?string $status_assurance =null;
+    private ?int $age_assurance =null;
 
-    public function __construct( $n, $i, $t,$d,$s)
+    public function __construct( $n, $i, $t,$d,$s ,$a)
     {
      
         $this->nom_assurance = $n;
@@ -16,6 +17,8 @@ class AssuranceM
         $this->type_assurance = $t;
         $this->date_assurance =$d;
         $this->status_assurance =$s;
+        $this->age_assurance =$a;
+
     }
 
     public function getIdAssurance()
@@ -78,6 +81,18 @@ class AssuranceM
     public function setstatus($status_assurance)
     {
         $this->status_assurance = $status_assurance;
+
+        return $this;
+    }
+
+    public function getage()
+    {
+        return $this->age_assurance;
+    }
+
+    public function setage($age_assurance)
+    {
+        $this->age_assurance = $age_assurance;
 
         return $this;
     }

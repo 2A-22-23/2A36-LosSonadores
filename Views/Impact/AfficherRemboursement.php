@@ -1,5 +1,7 @@
 <?php
-include 'C:\xampp\htdocs\t_assurance\Controller\remboursement.php';
+//include 'C:\xampp\htdocs\t_assurance\Controller\remboursement.php';
+require 'C:\xampp\htdocs\t_assurance\Controller\remboursement.php';
+
 $as = new Remboursement();
 $email = $_GET['email'];
 $list = $as->AfficherRemboursement($email);
@@ -94,6 +96,7 @@ $list = $as->AfficherRemboursement($email);
       $id = $_POST['id_remb'];
       $Remboursements = new Remboursement();
       $Remboursements->deleteRemboursement($id); // Call the deleteAssurance function with the ID of the record to delete
+      //header('Location: AfficherRemboursement.php');
       header('Location: verification.php');
       exit();
     }
@@ -103,11 +106,12 @@ $list = $as->AfficherRemboursement($email);
       $id = $_POST['id_remb'];
       $matricule = $_POST['matricule_remb'];
       $pourcentage = $_POST['pourcentage_remb'];
-      $date = $_POST['age_remb'];
       $observation = $_POST['observation_remb'];
       $cotisation = $_POST['cota_remb'];
+      $date = $_POST['date_remb'];
       $Remboursements = new Remboursement();
-      $Remboursements->updateRemboursement($id,$matricule, $pourcentage, $age, $observation,$cota);
+      $Remboursements->updateRemboursement($id,$matricule, $pourcentage, $observation,$cotisation,$date);
+      //header('Location: AfficherRemboursement.php');
       header('Location: verification.php');
       exit();
     }
@@ -122,34 +126,37 @@ $list = $as->AfficherRemboursement($email);
     <h2>Remboursement</h2>
     <?php foreach ($list as $Remboursements) { ?>
       <form method="post">
-        
+      <input type="hidden" name="id_remb" value="<?= $Remboursements['id_remb']; ?>">
       <div class="form-group">
           <label for="nom">matricule </label>
          <input type="text" name="matricule_remb"id='matricule_remb' placeholder="Entrer votre nom"  value="<?= $Remboursements['matricule_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
+    
         </div>
         <div class="form-group">
           <label for="nom">pourcentage </label>
          <input type="text" name="pourcentage_remb"id='pourcentage_remb' placeholder="Entrer votre nom"  value="<?= $Remboursements['pourcentage_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
+    
         </div>
-        <div class="form-group">
-          <label for="nom">Date </label>
-         <input type="text" name="age_remb"id='age_remb' placeholder="Entrer votre nom" value="<?= $Remboursements['age_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
-        </div>
+       
         <div class="form-group">
           <label for="nom">observation </label>
          <input type="text" name="observation_remb"id='observation_remb' placeholder="Entrer votre nom"  value="<?= $Remboursements['observation_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
+   
         </div>
         <div class="form-group">
-        <input type="hidden" name="id_remb" value="<?= $Remboursements['id_remb']; ?>">
+       
           <label for="nom">cota </label>
         
           <input type="text" name="cota_remb"id='cota_remb' placeholder="Entrer votre nom"  value="<?= $Remboursements['cota_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
-    <span id="nom-error" style="color: red; font-weight: bold;"></span>
+    
         </div>
+        <div class="form-group">
+       
+       <label for="nom">date </label>
+     
+       <input type="date" name="date_remb"id='date_remb' placeholder="Entrer votre date"  value="<?= $Remboursements['date_remb']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
+ 
+     </div>
         </div>
 
         <?php if (isset($_POST['idbutton'])) { ?>

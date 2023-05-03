@@ -4,19 +4,20 @@ class remboursementM
     private ?string $id_remb = null;
     private ?string $matricule_remb = null;
     private ?string $pourcentage_remb = null;
-    private ?string $age_remb = null;
+    private ?string $plafond_remb = null;
     private ?string $observation_remb = null;
     private ?string $cota_remb =null;
+    private ?string $date_remb = null;
     private ?string $id_assurance =null;
     private ?string $idhist =null;
+    private ?int $code =null;
 
-    public function __construct( $m,$p,$d,$o,$c)
+    public function __construct( $m,$p,$o,$dat)
     {
         $this->matricule_remb =$m;
         $this->pourcentage_remb =$p;
-        $this->age_remb =$d;
         $this->observation_remb =$o;
-        $this->cota_remb =$c;
+        $this->date_remb =$dat;
        
     }
 
@@ -55,17 +56,19 @@ class remboursementM
 
         return $this;
     }
-    public function getage()
+    
+    public function getplafond()
     {
-        return $this->age_remb;
+        return $this->plafond_remb;
     }
 
-    public function setage($age_remb)
+    public function setplafond($plafond_remb)
     {
-        $this->age_remb = $age_remb;
+        $this->plafond_remb = $plafond_remb;
 
         return $this;
     }
+    
 
     public function getobservation()
     {
@@ -87,6 +90,16 @@ class remboursementM
     public function setcota($cota_remb)
     {
         $this->cota_remb = $cota_remb;
+
+        return $this;
+    }
+    public function getdate()
+    {
+        return $this->date_remb;
+    }
+    public function setdate($date_remb)
+    {
+        $this->date_remb = $date_remb;
 
         return $this;
     }
@@ -112,6 +125,7 @@ class remboursementM
 
         return $this;
     }
+  
 
 }
 ?>

@@ -94,6 +94,7 @@ label {
     
  </style> 
 <div class="container">
+  <br>
   <div class ="section-header">
               <h2>Remboursement</h2>
 </div>      
@@ -114,26 +115,18 @@ label {
                         <div class="form-group">
                             <label for="matricule_remb">Matricule *</label>
                             <input id="matricule_remb" type="text" name="matricule_remb" class="form-control" placeholder="Enter your matricule *"  onkeyup ="checkmatricule()" >
-                            
+                            <span id="matricule-error" style="color: red; font-weight: bold;"></span>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-group">
                         <label for="pourcentage_remb">Pourcentage * </label>
-                            <input id="pourcentage_remb" type="text" name="pourcentage_remb" class="form-control" placeholder="Please enter the pourcentage *">
-                           
+                            <input id="pourcentage_remb" type="text" name="pourcentage_remb" class="form-control" placeholder="Please enter the pourcentage *" onkeyup="checkpour()">
+                            <span id="pour-error" style="color: red; font-weight: bold;"></span>
                             
                         </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-6">
-                        <div class="form-group">
-                        <label for="date_remb">Age *</label>  
-                            <input id="age_remb" type="text" name="age_remb" class="form-control" placeholder="Please enter your age*" onkeyup ="checkage()" >
-                           
-                            
-                        </div>
-                    </div>
+               
                     <div class="col-md-6">
                          <div class="form-group">
                          <label for="observation_remb"> Observation *</label>  
@@ -144,10 +137,19 @@ label {
                 </div>
                 <div class="col-md-6">
                         <div class="form-group">
-                        <label for="cota_remb"> cota *</label>  
-                            <input id="cota_remb" type="text" name="cota_remb" class="form-control" placeholder="Please enter your cota *" >
+                        <label for="code"> code *</label>  
+                            <input id="code" type="number" name="code" class="form-control" placeholder="Please enter your code *" onkeyup="checkcota()" >
                             
                         </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                        <label for="date_remb"> Date *</label>  
+                            <input id="date_remb" type="date" name="date_remb" class="form-control" placeholder="Please enter your date *" >
+                            
+                        </div>
+
+                        
                     </div>
 
   <div class="row">
@@ -162,8 +164,14 @@ label {
   <?php endif; ?>
 </div>
 
+<div class="row">
+  <?php if (isset($_GET['age_assurance'])): ?>
+    <input type="hidden" name="age" value="<?php echo htmlspecialchars($_GET['age_assurance'], ENT_QUOTES); ?>">
+  <?php endif; ?>
+</div>
 
 
+<br>
 
  
   <div class="text-center">
@@ -197,7 +205,7 @@ label {
 
     var matricule = document.forms['remboursement']['matricule_remb']; 
     var pourcentage = document.forms['remboursement']['pourcentage_remb']; 
-    var age = document.forms['remboursement']['age_remb']; 
+    var date = document.forms['remboursement']['date_remb']; 
     var observation = document.forms['remboursement'][' observation_remb']; 
     var cota = document.forms['remboursement']['cota_remb']; 
    
@@ -226,13 +234,13 @@ label {
         }else{    pourcentage.style.border = "1px solid #5E6E66";}
 		
         
-        if(age .value == "")
+        if(date .value == "")
         {
-          age .style.border = "3px solid red";
-            alert("You didnt enter your age!");
-            age .focus();
+          date .style.border = "3px solid red";
+            alert("You didnt enter the date!");
+            date .focus();
             return false;
-        }else{    age .style.border = "1px solid #5E6E66";}
+        }else{    date .style.border = "1px solid #5E6E66";}
 
 
         if(observation.value == "")
@@ -262,7 +270,7 @@ label {
      const pourcentage =document.getElementById("pourcentage_remb");
      const date =document.getElementById("date_remb");
      const observation=document.getElementById("observation_remb");
-     const cotisation =document.getElementById("cotisation_remb");
+     const cotisation =document.getElementById("cota_remb");
 
      form.addEeventListener('submit',e =>{
        e.preventDefault();
@@ -294,11 +302,11 @@ label {
         setSuccess(observation);
       }
       
-      if (cotisationValue === ''){
-        setError(cotisation,'cotisation Cannot be blank');
+      if (codeValue === ''){
+        setError(code,'code Cannot be blank');
       }
       else {
-        setSuccess(cotisation);
+        setSuccess(code);
       }
 
     }
@@ -324,7 +332,7 @@ function checkmatricule() {
 
    // Make an AJAX request to check if the matricule already exists
    const xhr = new XMLHttpRequest();
-   xhr.open('POST', 'check-matricule.php');
+   xhr.open('POST', 'check_matriculeremb.php');
    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
    xhr.onload = function() {
        if (xhr.status === 200) {
@@ -342,21 +350,58 @@ function checkmatricule() {
    xhr.send(`matricule_remb=${matriculeInput.value}`);
 }
 
-function checkage() {
- const nomInput = document.getElementById('age_remb');
- const nomError = document.getElementById('age-error');
- const regex = /^[0-9]+$/; // Expression régulière pour les lettres uniquement
- const nomAssuranceValue = nomInput.value.trim(); // Supprimer les espaces au début et à la fin de la chaîne
+function checkcota() {
+ 
+ const codeInput = document.getElementById('code');
+ const matriculeError = document.getElementById('cota-error');
 
- if (!regex.test(nomAssuranceValue)) { // Si la chaîne ne contient pas que des lettres
-   nomError.textContent = 'the name has to have lettre';
-   document.getElementById("idbutton").disabled = true;
- } else {
-   nomError.textContent = '';
-  //
-   //enableButton();
-   document.getElementById("idbutton").disabled = false;
- }
+ // Make an AJAX request to check if the matricule already exists
+ const xhr = new XMLHttpRequest();
+ xhr.open('POST', 'check-plafond.php');
+ xhr.send(`code=${codeInput.value}`);
+ xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+ xhr.onload = function() {
+     if (xhr.status === 200) {
+         const response = JSON.parse(xhr.responseText);
+         if (response.exists) {
+             matriculeError.textContent = 'vous avez depasser votre plafond';
+             document.getElementById("idbutton").disabled = true;
+         } else {
+             matriculeError.textContent = '';
+            // enableButton();
+            document.getElementById("idbutton").disabled = false;
+         }
+     }
+ };
+ xhr.send(`code=${codeInput.value}`);
+}
+
+function checkage() {
+  const nomInput = document.getElementById('age_remb');
+  const nomError = document.getElementById('age-error');
+  const regex = /^[0-9]+$/; // Expression régulière pour les chiffres uniquement
+  const nomAssuranceValue = nomInput.value.trim(); // Supprimer les espaces au début et à la fin de la chaîne
+  if (!regex.test(nomAssuranceValue)) { // Si la chaîne ne contient pas que des chiffres
+    nomError.textContent = 'the input has to have only numbers'; 
+    document.getElementById("idbutton").disabled = true;
+  } else {
+    nomError.textContent = '';
+    document.getElementById("idbutton").disabled = false;
+  }
+}
+
+function checkpour() {
+  const nomInput = document.getElementById('pourcentage_remb');
+  const nomError = document.getElementById('pour-error');
+  const regex = /^[0-9]+$/; // Expression régulière pour les chiffres uniquement
+  const nomAssuranceValue = nomInput.value.trim(); // Supprimer les espaces au début et à la fin de la chaîne
+  if (!regex.test(nomAssuranceValue)) { // Si la chaîne ne contient pas que des chiffres
+    nomError.textContent = 'the input has to have only numbers'; 
+    document.getElementById("idbutton").disabled = true;
+  } else {
+    nomError.textContent = '';
+    document.getElementById("idbutton").disabled = false;
+  }
 }
 
 

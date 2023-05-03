@@ -333,27 +333,46 @@ if (!$pdo) {
   echo "error ";
 }
 
-$req = $pdo->query("SELECT age_remb FROM t_remboursement");
+$req = $pdo->query("SELECT pourcentage_remb FROM t_remboursement");
 $data = $req->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($data as $row) {
-  $remboursements[] = $row['age_remb'];
+  $remboursements[] = $row['pourcentage_remb'];
 }
 
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_remboursement WHERE pourcentage_remb >'50'");
+
+$stmt->execute();
+
+// Get row count
+$plus = $stmt->fetchColumn();
+
 //var_dump($remboursements);
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_remboursement WHERE  pourcentage_remb <'50'");
+
+$stmt->execute();
+
+// Get row count
+$moins = $stmt->fetchColumn();
+
 ?>
 
       <script>
   const labels = <?php echo json_encode($remboursements)?>;
+  const plus = <?php echo json_encode($plus)?>;
+  const moins = <?php echo json_encode($moins)?>;
+ 
   const ctx = document.getElementById('myChart');
 
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: labels ,
+      labels: ['plus que 50','moins que 50'] ,
       datasets: [{
-        label: 'Age Remboursement',
-        data: [12, 19, 3, 5, 2, 3],
+        label: 'pourcentage',
+        data: [plus , moins],
         borderWidth: 1
       }]
     },

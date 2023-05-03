@@ -18,11 +18,11 @@ class Assurance
       
     }
 
-    public function updateAssurance($id, $nom, $matricule, $type ,$date,$status)
+    public function updateAssurance($id, $nom, $matricule, $type ,$date,$status,$age)
     {
         $db = config::getConnexion();
        // $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type ,date_assurance =:date ,status_assurance=:status WHERE id_assurance = :id";
-       $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type, date_assurance = :date, status_assurance = :status WHERE id_assurance = :id ";
+       $sql = "UPDATE t_assurance SET nom_assurance = :nom, matricule_assurance = :matricule, type_assurance = :type, date_assurance = :date, status_assurance = :status ,age_assurance= :age WHERE id_assurance = :id ";
 
         $query = $db->prepare($sql);
         $query->bindParam(':id', $id);
@@ -31,8 +31,9 @@ class Assurance
         $query->bindParam(':type', $type);
         $query->bindParam(':date', $date);
         $query->bindParam(':status', $status);
+        $query->bindParam(':age', $age);
 
-        $errorMessage = "$id + $nom + $matricule + $type +$date +$status\n";
+        $errorMessage = "$id + $nom + $matricule + $type +$date +$status +$age\n";
         error_log($errorMessage, 3, "C:/Users/chino/Desktop/logs.log");
         $query->execute();
         error_log("Assurance updated successfully",3,"C:/Users/chino/Desktop/logs.log");
@@ -55,7 +56,7 @@ class Assurance
     
     function addAssurance($AssuranceM, $email)
     {
-        $sql = "insert into t_assurance (nom_assurance,matricule_assurance, type_assurance ,date_assurance ,status_assurance) VALUES (:B, :C, :D ,:E,:F)";
+        $sql = "insert into t_assurance (nom_assurance,matricule_assurance, type_assurance ,date_assurance ,status_assurance,age_assurance) VALUES (:B, :C, :D ,:E,:F,:A)";
         $db = config::getConnexion();
         try {
             $query = $db->prepare($sql);
@@ -65,6 +66,7 @@ class Assurance
             $D = $AssuranceM->getTypee();
             $E =$AssuranceM->getdate();
             $F =$AssuranceM->getstatus();
+            $A =$AssuranceM->getage();
 
           
             $query->bindValue(':B', $B);
@@ -72,6 +74,7 @@ class Assurance
             $query->bindValue(':D', $D);
             $query->bindValue(':E', $E);
             $query->bindValue(':F', $F);
+            $query->bindValue(':A', $A);
             $query->execute();
     
             $assuranceId = $db->lastInsertId();

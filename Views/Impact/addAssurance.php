@@ -6,11 +6,12 @@ if (isset($_POST['idbutton'])) {
   $type_assurance = $_POST['type_assurance'];
   $date_assurance = $_POST['date_assurance'];
   $status_assurance = $_POST['status_assurance'];
+  $age_assurance = $_POST['age_assurance'];
   $email = $_POST['email'];
  
  
 
-  $assurancem = new AssuranceM( $nom_assurance, $matricule_assurance, $type_assurance ,$date_assurance , $status_assurance);
+  $assurancem = new AssuranceM( $nom_assurance, $matricule_assurance, $type_assurance ,$date_assurance , $status_assurance , $age_assurance);
     
   $assurance = new Assurance();
   $assurance->addAssurance($assurancem,$email);

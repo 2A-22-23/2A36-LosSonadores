@@ -1,7 +1,3 @@
-<?php
-include 'C:\xampp\htdocs\t_assurance\config.php';
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,6 +6,7 @@ include 'C:\xampp\htdocs\t_assurance\config.php';
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <title>VITALIA</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- plugins:css -->
   <link rel="stylesheet" href="vendors/feather/feather.css">
   <link rel="stylesheet" href="vendors/ti-icons/css/themify-icons.css">
@@ -315,123 +312,13 @@ include 'C:\xampp\htdocs\t_assurance\config.php';
         </ul>
       </nav>
       <!-- partial -->
-      <?php
-
-//$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');
-$pdo = config::getConnexion();
-// Get number of rows in table
-$query_count = "SELECT COUNT(*) AS num_rows FROM t_remboursement";
-$stmt_count = $pdo->prepare($query_count);
-$stmt_count->execute();
-$num_rows = $stmt_count->fetchColumn();
-
-// Set page limit and current page
-$limit = 4;
-$page = isset($_GET['page']) ? $_GET['page'] : 1;
-
-// Calculate offset for current page
-$offset = ($page - 1) * $limit;
-
-// Get rows for current page
-$query = "SELECT * FROM t_remboursement LIMIT $limit OFFSET $offset";
-$stmt = $pdo->prepare($query);
-$stmt->execute();
-$data = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-?>
-      <!-- partial -->
-    
-          <div class="row">
-            <div class="col-md-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-
-        <script>
-  const searchInput = document.querySelector('#search-ido');
-
-  searchInput.addEventListener('input', function() {
-    const searchValue = this.value.trim().toLowerCase();
-    const tableRows = document.querySelectorAll('.styled-table tbody tr');
-
-    tableRows.forEach(function(row) {
-    const ido = row.querySelector('td:first-child').textContent.trim().toLowerCase();
-
-    if (ido.includes(searchValue)) {
-      row.style.display = '';
-    } else {
-      if(searchValue.length === 0) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
-    }
-  });
-});
-</script>
-<!-- HTML table -->
-<input type="text" id="search-input" placeholder="Search...">
-<table class="styled-table">
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>MATRICULE</th>
-      <th>POURCENTAGE</th>
-      <th>OBSERVATION</th>
-      <th>COTISATION </th>
-      <th>DATE</th>
-      <th>ACTION</th>
-    </tr>
-  </thead>
-  <tbody id="table-body">
-    <?php foreach ($data as $row): ?>
-      <tr>
-        <td><?php echo $row['id_remb']; ?></td>
-        <td><?php echo $row['matricule_remb']; ?></td>
-        <td><?php echo $row['pourcentage_remb']; ?></td>
-        <td><?php echo $row['observation_remb']; ?></td>
-        <td><?php echo $row['cota_remb']; ?></td>
-        <td><?php echo $row['date_remb']; ?></td>
-
-        <td>
-        <form action="deleteRemboursement.php" method="POST">
-                      <button type="submit" name="delete" value="<?= $row['id_remb'] ?>" class="btn btn-danger">Delete</button>
-                    </form>
-      </td>
-      </tr>
-    <?php endforeach; ?>
-  </tbody>
-</table>
-
-<!-- AJAX live search input -->
-<!--<input type="text" id="search-input" placeholder="Search...">  -->
-
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  $(document).ready(function() {
-    $('#search-input').on('keyup', function() {
-      var query = $(this).val();
-      $.ajax({
-        url: 'searchremb.php',
-        method: 'POST',
-        data: {
-          query: query
-        },
-        success: function(data) {
-          $('#table-body').html(data);
+      <style>
+        body {
+            display: flex;
+            align-items:center;
+            justify-content:center;
+            height:100vh;
         }
-      });
-    });
-  });
-</script>            
-                  <?php
-          $num_pages = ceil($num_rows / $limit);
-          // Display pagination links
-          for ($i = 1; $i <= $num_pages; $i++) {
-            echo '<a class="pagination-link" href="?page=' . $i . '">' . $i . '</a> ';
-          }
-        ?>
-          <style>
         #myChart{
             height:400px !important;
             width:100% !important;
@@ -441,51 +328,46 @@ $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
          <canvas id="myChart"></canvas>
       </div> 
       <?php
-//$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');
+$pdo = new PDO('mysql:host=localhost;dbname=vitaliaa', 'root','');
 if (!$pdo) {
   echo "error ";
 }
 
-$req = $pdo->query("SELECT pourcentage_remb FROM t_remboursement");
+$req = $pdo->query("SELECT status_assurance FROM t_assurance");
 $data = $req->fetchAll(PDO::FETCH_ASSOC);
 
 foreach ($data as $row) {
-  $remboursements[] = $row['pourcentage_remb'];
+  $assurances[] = $row['status_assurance'];
 }
 
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_remboursement WHERE pourcentage_remb >'50'");
-
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_assurance WHERE status_assurance = 'active'");
 $stmt->execute();
 
 // Get row count
-$plus = $stmt->fetchColumn();
+$active = $stmt->fetchColumn();
+
+$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_assurance WHERE status_assurance = 'non active'");
+$stmt->execute();
+
+// Get row count
+$nactive = $stmt->fetchColumn();
 
 //var_dump($remboursements);
-
-$stmt = $pdo->prepare("SELECT COUNT(*) FROM t_remboursement WHERE  pourcentage_remb <='50'");
-
-$stmt->execute();
-
-// Get row count
-$moins = $stmt->fetchColumn();
-
 ?>
 
       <script>
-  const labels = <?php echo json_encode($remboursements)?>;
-  const plus = <?php echo json_encode($plus)?>;
-  const moins = <?php echo json_encode($moins)?>;
- 
+  const labels = <?php echo json_encode($assurances)?>;
+  const acive = <?php echo json_encode($active)?>;
+  const nacive = <?php echo json_encode($nactive)?>;
   const ctx = document.getElementById('myChart');
 
   new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: ['plus que 50','moins que 50'] ,
+      labels: ['active','non active'] ,
       datasets: [{
-        label: 'pourcentage',
-        data: [plus , moins],
+        label: 'status des assurances',
+        data: [acive, nacive],
         borderWidth: 1
       }]
     },
@@ -498,91 +380,3 @@ $moins = $stmt->fetchColumn();
     }
   });
 </script>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
-        <style>
-          #search-ido {
-  padding: 10px;
-  font-size: 16px;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
-  width: 300px;
-  margin-bottom: 20px;
-  outline: none;
-}
-
-          .pagination-link {
-    display: inline-block;
-    padding: 5px 10px;
-    background-color: #f2f2f2;
-    border: 1px solid #ccc;
-    margin-right: 5px;
-}
-
-.pagination-link:hover {
-    background-color: #ddd;
-}
-
-.pagination-link.active {
-    background-color: #4CAF50;
-    color: white;
-    border: 1px solid #4CAF50;
-}
- .search-input {
-    width: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    font-size: 16px;
-    outline: none;
-  }
-
-        </style>
-        
-        <!-- content-wrapper ends -->
-        <!-- partial:partials/_footer.html -->
-        <footer class="footer">
-          <div class="d-sm-flex justify-content-center justify-content-sm-between">
-            <span class="text-muted text-center text-sm-left d-block d-sm-inline-block">Copyright © 2021.  Premium <a href="https://www.bootstrapdash.com/" target="_blank">Bootstrap admin template</a> from BootstrapDash. All rights reserved.</span>
-            <span class="float-none float-sm-right d-block mt-1 mt-sm-0 text-center">Hand-crafted & made with <i class="ti-heart text-danger ml-1"></i></span>
-          </div>
-        </footer>
-        <!-- partial -->
-      </div>
-      <!-- main-panel ends -->
-    </div>
-    <!-- page-body-wrapper ends -->
-  </div>
-  <!-- container-scroller -->
-
-  <!-- plugins:js -->
-  <script src="vendors/js/vendor.bundle.base.js"></script>
-  <!-- endinject -->
-  <!-- Plugin js for this page -->
-  <script src="vendors/chart.js/Chart.min.js"></script>
-  <script src="vendors/datatables.net/jquery.dataTables.js"></script>
-  <script src="vendors/datatables.net-bs4/dataTables.bootstrap4.js"></script>
-  <script src="js/dataTables.select.min.js"></script>
-
-  <!-- End plugin js for this page -->
-  <!-- inject:js -->
-  <script src="js/off-canvas.js"></script>
-  <script src="js/hoverable-collapse.js"></script>
-  <script src="js/template.js"></script>
-  <script src="js/settings.js"></script>
-  <script src="js/todolist.js"></script>
-  <!-- endinject -->
-  <!-- Custom js for this page-->
-  <script src="js/dashboard.js"></script>
-  <script src="js/Chart.roundedBarCharts.js"></script>
-  <!-- End custom js for this page-->
-</body>
-
-</html>
-

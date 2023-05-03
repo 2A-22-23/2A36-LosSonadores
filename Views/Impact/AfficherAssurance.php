@@ -104,8 +104,9 @@ $list = $as->AfficherAssurances($email);
       $type = $_POST['type_assurance'];
       $date = $_POST['date_assurance'];
       $status = $_POST['status_assurance'];
+      $age = $_POST['age_assurance'];
       $assurance = new Assurance();
-      $assurance->updateAssurance($id, $nom, $mat, $type,$date,$status);
+      $assurance->updateAssurance($id, $nom, $mat, $type,$date,$status,$age);
       header('Location: verification.php');
       exit();
     }
@@ -151,6 +152,12 @@ $list = $as->AfficherAssurances($email);
           
           </select>
         </div>
+        <div class="form-group">
+          <label for="age_assurance">Age</label>
+          <input type="text" name="age_assurance" id='age_assurance' placeholder="Entrer votre matricule"  value="<?= $Assurances['age_assurance']; ?>" <?= isset($_POST['idbutton']) ? '' : 'readonly'; ?>>
+          <span id="age-error" style="color: red; font-weight: bold;"></span>
+
+        </div>
         </div>
         
         <?php if (isset($_POST['idbutton'])) { ?>
@@ -164,11 +171,12 @@ $list = $as->AfficherAssurances($email);
           </div>
           <input type="hidden" name="id_assurance" value="<?= $Assurances['id_assurance']; ?>">
         <?php } ?>
+        
       </form>
     <?php } ?>
     
     <div class="text-center">
-  <a href="frontAddRemboursement.php?email=<?= $email ?>&idAssurance=<?= $Assurances['id_assurance'] ?>"><strong>Remboursement</strong></a>
+  <a href="frontAddRemboursement.php?email=<?= $email ?>&idAssurance=<?= $Assurances['id_assurance'] ?>&age=<?= $Assurances['age_assurance'] ?>"><strong>Remboursement</strong></a>
 </div>
   </div>
 </div>
