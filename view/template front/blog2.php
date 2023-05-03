@@ -145,7 +145,7 @@ $list = $pharmacieC->listpharmacie();
                     <input type="text" name="address" class="form-control" id="address" autocomplete="off">
                 </div>
                  <br>
-                <button type="submit" onsubmit="return validatePharmacie()" class="btn btn-primary mr-2" >login </button>
+                <button type="submit" onsubmit="return validatePharmacie()" class="btn btn-primary mr-2"  >login </button>
              
             <!--<button type="submit"   formaction="updatephar.php" class="btn btn-primary mr-2" >Modifier</button>-->
             
@@ -161,35 +161,6 @@ $list = $pharmacieC->listpharmacie();
 
    
     </section><!-- End Blog Section -->
-    <script>
-    function validatePharmacie() {
-    const nomRegex = /^[A-Za-z ]+$/;
-
-
-    // Récupération des champs
- 
-    var name = document.getElementById("Name");
-    var ville = document.getElementById("ville");
-    var address = document.getElementById("address");
-  
-    // Vérification que les champs obligatoires sont remplis
-    if (name.value == "" || ville.value == "" || address.value == "") {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return false;
-    }
-        // Vérification que les champs idphar et ido sont des nombres entiers positifs
- 
-    if (!nomRegex.test(name.value)) {
-        alert('Le nom ne doit contenir que des lettres.');
-        return false;
-      }
-    if (!nomRegex.test(ville.value)) {
-        alert('la ville ne doit contenir que des lettres.');
-        return false;
-      }
-    return true;
-  }
-  </script>
 
   </main><!-- End #main -->
 
@@ -256,12 +227,13 @@ $list = $pharmacieC->listpharmacie();
   <div id="preloader"></div>
 
   <!--Vendor JS Files --> 
-   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></>
+   <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
   <script src="assets/vendor/aos/aos.js"></script>
   <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="assets/vendor/purecounter/purecounter_vanilla.js"></script>
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+  <script src="../../js/controleSaisieBack.js"></script>
   <script src="../../vendors/js/vendor.bundle.base.js"></script>
   <!-- endinject -->
   <!-- Plugin js for this page -->
@@ -279,10 +251,11 @@ $list = $pharmacieC->listpharmacie();
   <script src="../../js/file-upload.js"></script>
   <script src="../../js/typeahead.js"></script>
   <script src="../../js/select2.js"></script>
-  
+  <script src="../../js/controleSaisieBack.js"></script>
+
+
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="./assets/js/controleSaisieFront.js"></script>
 
 </body>
 

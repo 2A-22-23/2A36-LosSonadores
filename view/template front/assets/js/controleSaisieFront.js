@@ -1,97 +1,120 @@
 //--------------------------------------------PHARMACIE---------------------------------------------
-  function validatePharmacie() {
-    const nomRegex = /^[A-Za-z ]+$/;
 
+function validatePharmacie() {
+  const name = document.getElementById("Name");
+  const ville = document.getElementById("ville");
+  const address = document.getElementById("address");
 
-    // Récupération des champs
- 
-    var name = document.getElementById("Name");
-    var ville = document.getElementById("ville");
-    var address = document.getElementById("address");
-  
-    // Vérification que les champs obligatoires sont remplis
-    if (name.value == "" || ville.value == "" || address.value == "") {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return false;
+  // Récupérer les éléments pour les messages d'alerte
+  const nameAlert = document.getElementById("NameAlert");
+  const villeAlert = document.getElementById("villeAlert");
+  const addressAlert = document.getElementById("addressAlert");
+
+  // Initialiser la variable pour les messages d'alerte
+  let alert1 = {
+    message: "",
+    type: ""
+  };
+
+  // Vérifier si les champs obligatoires sont remplis
+  if (name.value === "" || ville.value === "" || address.value === "") {
+    // Mettre à jour le message d'alerte
+    alert1.message = 'Veuillez remplir tous les champs.';
+    alert1.type = 'danger';
+
+    // Afficher le message d'alerte sous chaque champ concerné
+    if (name.value === "") {
+      nameAlert.innerHTML = alert1.message;
+      nameAlert.classList.add("alert", "alert-danger");
     }
-        // Vérification que les champs idphar et ido sont des nombres entiers positifs
- 
-    if (!nomRegex.test(name.value)) {
-        alert('Le nom ne doit contenir que des lettres.');
-        return false;
-      }
-    if (!nomRegex.test(ville.value)) {
-        alert('la ville ne doit contenir que des lettres.');
-        return false;
-      }
-    return true;
+    if (ville.value === "") {
+      villeAlert.innerHTML = alert1.message;
+      villeAlert.classList.add("alert", "alert-danger");
+    }
+    if (address.value === "") {
+      addressAlert.innerHTML = alert1.message;
+      addressAlert.classList.add("alert", "alert-danger");
+    }
+    
+
+    return false;
   }
-//--------------------------------------------HISTORIQUE---------------------------------------------
-function validateHistorique() {
+
+  // Vérifier si le nom et la ville ne contiennent que des lettres
   const nomRegex = /^[A-Za-z]+$/;
+  if (!nomRegex.test(name.value)) {
+    // Mettre à jour le message d'alerte
+    alert1.message = 'Le nom ne doit contenir que des lettres';
+    alert1.type = 'danger';
 
+    // Afficher le message d'alerte sous le champ correspondant
+    nameAlert.innerHTML = alert1.message;
 
-  // Récupération des champs
-  var ido = document.getElementById("patient_name");
-  
-  var prix = document.getElementById("prix");
-  var date = document.getElementById("doctor_name")
+    return false;
+  }
+  if (!nomRegex.test(ville.value)) {
+    // Mettre à jour le message d'alerte
+    alert1.message = 'La ville ne doit contenir que des lettres';
+    alert1.type = 'danger';
 
-  // Vérification que les champs obligatoires sont remplis
-  if (patient_name.value == ""  || prix.value == "" || doctor_name.value == "" ) {
-    alert("Veuillez remplir tous les champs obligatoires.");
+    // Afficher le message d'alerte sous le champ correspondant
+    villeAlert.innerHTML = alert1.message;
+
     return false;
   }
 
-  // Vérification que les champs idphar et ido sont des nombres entiers positifs
-  if (isNaN(prix.value) || prix.value < 0) {
-    alert("Le prix doit être un nombre entier positif.");
-    return false;
-  }
-  if (!nomRegex.test(patient_name.value)) {
-    alert('Le nom ne doit contenir que des lettres.');
-    return false;
-  }
-  if (!nomRegex.test(doctor_name.value)) {
-    alert('Le nom ne doit contenir que des lettres.');
-    return false;
-  }
-
+  // Si tout est valide, retourner true
   return true;
 }
+
 //--------------------------------------------code--------------------------------------------- 
 function validatecode() {
   // Récupération des champs
-  var code = document.getElementById("code");
-  
 
+  var code0 = document.getElementById("code0");
+  const codeAlert = document.getElementById("codeAlert");
+  let alert2 = {
+    message: "",
+    type: ""
+  };
   // Vérification que les champs obligatoires sont remplis
-  if (code.value == "" ) {
-    alert("Veuillezajouter un code.");
+  if (code0.value === "") {
+    // Mettre à jour le message d'alerte
+    alert2.message = 'Veuillez mettre un code.';
+    alert2.type = 'danger';
+
+    // Afficher le message d'alerte sous chaque champ concerné
+    if (code0.value === "") {
+      codeAlert.innerHTML = alert2.message;
+      codeAlert.classList.add("alert", "alert-danger");
+    }
+ 
     return false;
   }
-
-  // Vérification que les champs idphar et ido sont des nombres entiers positifs
-  if (isNaN(code.value) || code.value < 0) {
-    alert("le code n'est pas valable.");
-    return false;
-  }
-
-  return true;
 }
 //--------------------------------------------prix--------------------------------------------- 
 function validateprix() {
- 
+
   // Récupération des champs
    var prix = document.getElementById("prix");
- // Vérification que les champs obligatoires sont remplis
- if (prix.value == "" ) {
-  alert("Veuillez ajouter un prix.");
-  return false;
-}
- if (isNaN(prix.value) || prix.value < 0) {
-  alert("le prix n'est pas valable.");
+   const prixAlert = document.getElementById("prixAlert");
+   let alert3 = {
+    message: "",
+    type: ""
+  };
+ 
+  // Vérification que les champs obligatoires sont remplis
+  if (prix.value === "") {
+    // Mettre à jour le message d'alerte
+    alert3.message = 'Veuillez mettre un prix.';
+    alert3.type = 'danger';
+
+    // Afficher le message d'alerte sous chaque champ concerné
+    if (prix.value === "") {
+      prixAlert.innerHTML = alert3.message;
+      prixAlert.classList.add("alert", "alert-danger");
+    }
+ 
     return false;
-}
-  return true;
+  }
 }

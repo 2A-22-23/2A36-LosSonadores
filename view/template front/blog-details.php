@@ -163,49 +163,8 @@ if (isset($_GET['idphar'])) {
 
     <input type="hidden" name="pharmacie_id" value="<?php echo $pharmacie['idphar']; ?>">
 
-    <button type="submit" name="search" class="btn btn-primary mr-2" onsubmit="validatecode()">Rechercher</button>
+    <button type="submit" name="search" onsubmit="validatecode()">Rechercher</button>
 </form>
-<script>
-  function validatecode() {
-  // Récupération des champs
-  var code = document.getElementById("code");
-  
-
-  // Vérification que les champs obligatoires sont remplis
-  if (code.value == "" ) {
-    alert("Veuillezajouter un code.");
-    return false;
-  }
-
-  // Vérification que les champs idphar et ido sont des nombres entiers positifs
-  if (isNaN(code.value) || code.value < 0) {
-    alert("le code n'est pas valable.");
-    return false;
-  }
-
-  return true;
-}
-function validatePrix() {
-  // Récupération du champ de prix
-  var prix = document.getElementById("prix");
-  
-  // Vérification que le champ obligatoire est rempli
-  if (prix.value.trim() === "") {
-    alert("Veuillez ajouter un prix.");
-    return false;
-  }
-  
-  // Vérification que le champ contient un nombre positif
-  var prixValue = parseFloat(prix.value);
-  if (isNaN(prixValue) || prixValue < 0) {
-    alert("Le prix n'est pas valide.");
-    return false;
-  }
-  
-  return true;
-}
-
-</script>
 <br>
 
 <?php
@@ -254,49 +213,38 @@ if (isset($_POST['prix'])) {
         echo "<script>alert('ordonnance enregistrée avec succès!');</script>";
     }
 }
+
+// Affichage des résultats de la recherche
+if (isset($result)) {
+    if (count($result) > 0) {
+        foreach ($result as $row) {
+            // Affichage des informations de l'ordonnance
+            echo "Code : " . $row['code'] . "<br>";
+            echo "Nom du médicament : " . $row['nom_medicament'] . "<br>";
+            echo "Nom du patient : " . $row['patient_name'] . "<br>";
+            echo "Nom du docteur : " . $row['doctor_name'] . "<br>";
+         
+            // Formulaire pour ajouter le prix
+            
+            echo "<hr>";
+            echo "<form method='POST' onsubmit='return validateprix()>";
+            echo "<label for='prix'>Prix :  </label>";
+            echo "<input type='number' name='prix' id='prix' autocomplete='off' min='0'>";
+            echo "<input type='hidden' name='pharmacie_id' value='".$pharmacie_id."'>";
+            echo "<input type='hidden' name='code' value='".$code."'>";
+            echo "<input type='hidden' name='patient_name' value='".$patient_name."'>";
+            echo "<input type='hidden' name='doctor_name' value='".$doctor_name."'>";
+            echo "<button type='submit' name='search' > Enregistrer   </button>";
+            echo "</form>";
+            echo "<hr>";
+            
+            
+        }    echo "<script>alert('résultat trouvé!');</script>";
+      } else {
+        echo "<script>alert('Aucun résultat trouvé!');</script>";
+    }
+}
 ?>
-<!---------------------------------- Affichage des résultats de la recherche----------------->
-<section id="blog" class="blog">
-  <div class="container" data-aos="fade-up">
-    <div class="row gy-4 posts-list">
-      <?php 
-      if (isset($result)) {
-        if (count($result) > 0) {
-          foreach ($result as $row) { 
-            ?>
-            <div class="col-xl-4 col-md-6">
-              <article>
-                <p class="post-category" >
-                  <?php
-                  echo "Code : " . $row['code'] . "<br>";
-                  echo "Nom du médicament : " . $row['nom_medicament'] . "<br>";
-                  echo "Nom du patient : " . $row['patient_name'] . "<br>";
-                  echo "Nom du docteur : " . $row['doctor_name'] . "<br>";
-                  ?>
-                </p>
-                <hr>
-                <form method="POST" onsubmit="return validatePrix()">
-                  <label for="prix">Prix :</label>
-                  <input type="number" name="prix" id="prix" autocomplete="off" min="0">
-                  <input type="hidden" name="pharmacie_id" value="<?php echo $pharmacie_id; ?>">
-                  <input type="hidden" name="code" value="<?php echo $row['code']; ?>">
-                  <input type="hidden" name="patient_name" value="<?php echo $row['patient_name']; ?>">
-                  <input type="hidden" name="doctor_name" value="<?php echo $row['doctor_name']; ?>">
-                  <button type="submit" name="search" class="btn btn-primary mr-2">Enregistrer</button>
-                </form>
-              </article>
-            </div>
-            <?php
-          }
-          echo "<script>alert('résultat trouvé!');</script>";
-        } else {
-          echo "<script>alert('Aucun résultat trouvé!');</script>";
-        }
-      }
-      ?>
-    </div>
-  </div>
-</section>
 
 
 
@@ -381,11 +329,9 @@ if (isset($_POST['prix'])) {
   <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
   <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
   <script src="assets/vendor/php-email-form/validate.js"></script> 
+  <script src="../../js/controleSaisieBack.js"></script>
 <!--Template Main JS File -->
   <script src="assets/js/main.js"></script>
-  <script src="../../js/controleSaisieBack.js"></script>
-
-
 
 </body>
 

@@ -23,7 +23,7 @@ if(isset($_POST['enter'])){
      if ($row['type'] == 'Patient') {
       header('location:patient.php');
     } else if ($row['type'] == 'Pharmacist') {
-      header('location:blog2.php');
+      header('location:pharmacie.php');
     }
   }else{
      $message[] = 'incorrect username or password!';

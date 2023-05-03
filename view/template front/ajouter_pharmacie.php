@@ -12,7 +12,7 @@ if (isset($_POST['Name']) && isset($_POST['ville']) && isset($_POST['address']))
 
     if ($existingPharmacie !== false) {
         // La pharmacie existe déjà, on redirige vers la page contenant ses informations
-        header("Location: blog-details.php?idphar={$existingPharmacie['idphar']}");
+        header("Location: pharmacie-details.php?idphar={$existingPharmacie['idphar']}");
         exit();
     } else {
         // Insertion de la nouvelle pharmacie
@@ -23,16 +23,16 @@ if (isset($_POST['Name']) && isset($_POST['ville']) && isset($_POST['address']))
         if ($pharmacie_id !== false) {
             // Redirection vers la page contenant les informations de la pharmacie
          
-            echo "<script>window.location.href='blog-details.php?idphar=$pharmacie_id';</script>";
+            echo "<script>window.location.href='pharmacie-details.php?idphar=$pharmacie_id';</script>";
                echo "<script>alert('Pharmacie ajoutée avec succès!');</script>";
             exit;
         } else {
-            header('Location: blog2.php');
+            header('Location: pharmacie.php');
             exit();
         }
     }
 } else {
-    header('Location: blog2.php');
+    header('Location: pharmacie.php');
     exit();
 }
 ?>

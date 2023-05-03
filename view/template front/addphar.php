@@ -24,15 +24,15 @@ if (
        
 
         echo "<script> alert('Pharmacie ajoutée avec succès!');</script>";
-        echo "<script> window.location.href='blog-details.php';</script>";
+        echo "<script> window.location.href='pharmacie-details.php';</script>";
     } 
     else 
     {
-        header('location:blog2.php');
+        header('location:pharmacie.php');
     }
 }
 else 
 {
-    header('location:blog2.php');
+    header('location:pharmacie.php');
 }
 ?>

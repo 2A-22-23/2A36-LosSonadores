@@ -1,20 +1,3 @@
-<section id="blog" class="blog">
-  <div class="container" data-aos="fade-up">
-</div>
-
-<div class="col-lg-10">
-
-<div class="sidebar">
-
-<div class="sidebar-item search-form">
-  <h3 class="sidebar-title">Search ordonnance</h3>
-  <form action="" class="mt-3">
-    <input type="text">
-    <button type="submit"><i class="bi bi-search"></i></button>
-  </form>
-</div>
-
-
 
 <!---<!DOCTYPE html>
 <html lang="en">
@@ -450,46 +433,3 @@ onsubmit="return validatePharmacie()
       </div>
   
     </div>-->
-
-
-
-
-
-
-
-
-
-
-
-
-
-    if (isset($result)) {
-    if (count($result) > 0) {
-        foreach ($result as $row) {
-            // Affichage des informations de l'ordonnance
-            echo "Code : " . $row['code'] . "<br>";
-            echo "Nom du médicament : " . $row['nom_medicament'] . "<br>";
-            echo "Nom du patient : " . $row['patient_name'] . "<br>";
-            echo "Nom du docteur : " . $row['doctor_name'] . "<br>";
-         
-            // Formulaire pour ajouter le prix
-            
-            echo "<hr>";
-            echo "<form method='POST' onsubmit='return validatePrix()>";
-            echo "<label for='prix'>Prix :  </label>";
-            echo "<input type='number' name='prix' id='prix' autocomplete='off' min='0'>";
-            echo "<input type='hidden' name='pharmacie_id' value='".$pharmacie_id."'>";
-            echo "<input type='hidden' name='code' value='".$code."'>";
-            echo "<input type='hidden' name='patient_name' value='".$patient_name."'>";
-            echo "<input type='hidden' name='doctor_name' value='".$doctor_name."'>";
-            echo "<button type='submit' name='search' > Enregistrer   </button>";
-            echo "</form>";
-            echo "<hr>";
-            
-            
-        }    echo "<script>alert('résultat trouvé!');</script>";
-      } else {
-        echo "<script>alert('Aucun résultat trouvé!');</script>";
-    }
-}
-?>

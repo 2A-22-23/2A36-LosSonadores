@@ -1,3 +1,20 @@
+<?php
+
+include "C:/xampp/htdocs/PROJET_PHARMACIEcrud/Controller/pharmacieC.php";
+use PHPMailer\PHPMailer\PHPMailer;
+require_once 'Exception.php';
+require_once 'PHPMailer.php';
+require_once 'SMTP.php';
+
+$mail = new PHPMailer(true);
+
+
+$pharmacieC = new pharmacieC();
+$list = $pharmacieC->listpharmacie();
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,7 +69,7 @@
       <ul>
           <li><a href="home.php">Home</a></li>
           <li><a href="patient.php">Patient</a></li>
-          <li><a href="blog2.php">Pharmacie</a></li>
+          <li><a href="pharmacie.php">Pharmacie</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
       </nav><!-- .navbar -->
@@ -71,7 +88,7 @@
         <div class="container position-relative">
           <div class="row d-flex justify-content-center">
             <div class="col-lg-6 text-center">
-              <h2>Patient</h2>
+              <h2>Nos Pharmacies</h2>
 
             </div>
           </div>
@@ -88,26 +105,22 @@
     </div><!-- End Breadcrumbs -->
 
     <!-- ======= Blog Section ======= -->
-   
-    <form method="POST">
-    <label for="ville">Trier par ville :</label>
-    <select name="ville" id="ville">
-        <option value="">-- Choisissez une ville --</option>
-        <option value="tunis">tunis</option>
-        <option value="ariana">ariana</option>
-        
-        <!-- Ajoutez d'autres options pour chaque ville -->
-    </select>
-    <button type="submit"  class="btn btn-primary">Trier</button>
+   <!-----------------------------trier------------->
+   <form method="POST">
+  <select name="ville" id="ville" style="border: 1px solid #ccc; padding: 8px; margin: 0 10px;">
+    <option value="">-- Choisissez une ville --</option>
+    <option value="tunis">Tunis</option>
+    <option value="ariana">Ariana</option>
+    <!-- Ajoutez d'autres options pour chaque ville -->
+  </select>
+  <button type="submit" class="btn btn-primary1" >Trier</button>
 </form>
 
-        <?php
+ <?php
    
         // Connexion à la base de données
-        $conn = new PDO('mysql:host=localhost;dbname=gestion_pharmacie', 'root', '');
-        
-        
-        // Requête SQL pour récupérer les informations de la pharmacie
+        $conn = config::getConnexion();
+
         // Requête SQL pour récupérer les informations de la pharmacie triées par ville
 if (isset($_POST['ville']) && !empty($_POST['ville'])) {
   $ville = $_POST['ville'];
@@ -120,12 +133,12 @@ if (isset($_POST['ville']) && !empty($_POST['ville'])) {
   $query = "SELECT Name, ville, address FROM pharmacie";
   $stmt = $conn->query($query);
 }
+ ?>
+      <!--------------------------fin trier---------------->
 
+<!--------------------affichage pharmacies----------------------->
 
-        
-        ?>
-      
-        <section id="blog" class="blog">
+      <section id="blog" class="blog">
   <div class="container" data-aos="fade-up">
     <div class="row gy-4 posts-list">
       <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
@@ -139,19 +152,138 @@ if (isset($_POST['ville']) && !empty($_POST['ville'])) {
           <div class="d-flex align-items-center">
             <p><?php echo $row['address']; ?></p>
           </div>
-          <button type="submit" formaction="" class="btn btn-primary">Ajouter</button>
+          <button type="button" class="btn btn-primary1" data-bs-toggle="modal" data-bs-target="#exampleModal">Ajouter</button>
         </article>
       </div>
       <?php } ?>
     </div>
   </div>
-</section>
+
+
+
+
+<!--------------mailing------------------------------------->
+<?php
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $name = $_POST['name'];
+    $code = $_POST['code'];
+    $message = $_POST['message'];
+
+ 
+
+    try {
+        $mail = new PHPMailer(true);
+        $mail->isSMTP();
+        $mail->Host = 'smtp.gmail.com';
+        $mail->SMTPAuth = true;
+        $mail->Username = 'vitalia.pharmacie@gmail.com';
+        $mail->Password = 'rrmymfvqpunthkkt';
+        $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+        $mail->Port = 587;
+
+        $mail->setFrom('vitalia.pharmacie@gmail.com', '');
+        $mail->addAddress('vitalia.pharmacie@gmail.com');
+
+        if ($_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            $tmp_name = $_FILES['file']['tmp_name'];
+            $name2 = $_FILES['file']['name'];
+            $mail->addAttachment($tmp_name, $name2);
+        }
+
+        $mail->Subject = 'nouvelle ordonnance (Contact Page)';
+        $mail->Body = '<h3>Name : ' . $name . '<br>Message : ' . $message . '<br>code : ' . $code . '</h3>';
+        $mail->IsHTML(true);
+
+        $mail->SMTPOptions = array(
+            'ssl' => array(
+                'verify_peer' => false,
+                'verify_peer_name' => false,
+                'allow_self_signed' => true
+            )
+        );
+
+        $mail->send();
+
+        http_response_code(200);
+        echo 'Message envoyé avec succès !';
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo 'Une erreur s\'est produite lors de l\'envoi du message. Veuillez réessayer plus tard.';
+    }
+    exit;
+}
+
+?>
 
 
 
 
 
 
+
+
+ 
+  <!-- Modal -->
+
+  <!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Envoyer votre ordonnance:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action="" method="post" enctype="multipart/form-data" id="contact-form">
+          <div class="mb-3">
+            <label for="name" class="form-label">Nom et Prénom</label>
+            <input type="text" class="form-control" id="name" name="name" >
+          </div>
+          <div class="mb-3">
+            <label for="code">code :</label>
+            <input type="number" class="form-control" id="code" name="code" >
+          </div>
+          <div class="mb-3">
+            <label for="message">Message :</label>
+            <textarea class="form-control" id="message" name="message" ></textarea>
+          </div>
+          <div class="mb-3">
+            <label for="file" class="form-label">Upload fichier</label>
+            <input type="file" class="form-control"  id="file" name="file" >
+          </div>
+          <div id="alert-message"></div>
+          <button type="submit" class="btn btn-primary1" name="submit" >Envoyer</button>
+        </form>      
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="mail.js"></script>
+
+
+
+
+<style>
+  .btn-primary1 {
+    background-color: #008374;
+    border-color: #000000;
+    color: white;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .btn-primary1:hover {
+    background-color: #0ac2ad;
+    border-color: #000000;
+    color: white
+  }
+  select:hover, button:hover {
+    background-color: #008374;
+    color: #fff;
+  }
+  
+</style>
       
          
     
@@ -234,6 +366,7 @@ if (isset($_POST['ville']) && !empty($_POST['ville'])) {
 
   <!-- Template Main JS File -->
   <script src="assets/js/main.js"></script>
+
 
 </body>
 

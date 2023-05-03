@@ -316,7 +316,7 @@ $pages = ceil($total / $limit);
     <tbody>
       <?php foreach ($list as $historique) { ?>
         <tr>
-          <td><?= $historique['code']; ?></td>
+          <td><?= $historique['code0']; ?></td>
           <td><?= $historique['doctor_name']; ?></td>
           <td><?= $historique['patient_name']; ?></td>
           <td><?= $historique['prix']; ?></td>
@@ -331,13 +331,13 @@ $pages = ceil($total / $limit);
           <div class="modal-dialog" role="document">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title" id="editModalLabel">Modifier l'historique</h5>
+                <h5 class="modal-title" id="editModalLabel">Modifier un historique</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
               <div class="modal-body">
-                <form method="POST" action="updatehist.php" onsubmit="return validateHistorqiueup()">
+                <form method="POST" action="updatehist.php" onsubmit="return validateHistorqiuem()">
                   <div class="form-group">
                     <input type="hidden" name="idhis" value="<?= $historique['idhis']; ?>">
                     <label for="patient_name">Patient Name</label>
@@ -362,15 +362,7 @@ $pages = ceil($total / $limit);
     </tbody>
   </table>
 </div>
-</form>
-            
-
-            
-            </div>
-        </div>
-    </div>
-    
-    <?php
+<?php
 
 // Nombre total de pages
 $pages = ceil($total / $limit);
@@ -382,94 +374,74 @@ for ($i = 1; $i <= $totalPages; $i++) {
 }
 
 ?>
-    <!----------------------------------controle---------------------------------------------------->
-     <script>
-    function validateHistorqiueup() {
+</form>
+            
 
+            
+            </div>
+        </div>
+    </div>
 
-// Récupération des champs
-var patient_name = document.getElementById("patient_name");
-
-var doctor_name = document.getElementById("doctor_name");
-var prix = document.getElementById("prix");
-
-// Vérification que les champs obligatoires sont remplis
-if (patient_name.value == ""  || prix.value == "" || doctor_name.value == "" ) {
-  alert("Veuillez remplir tous les champs obligatoires.");
-  return false;
-}
-
-if (!nomRegex.test(patient_name.value)) {
-  alert('Le nom ne doit contenir que des lettres.');
-  return false;
-}
-
-if (!nomRegex.test(doctor_name.value)) {
-  alert('Le nom ne doit contenir que des lettres.');
-  return false;
-}
-
-if (isNaN(prix.value) || prix.value < 0) {
-  alert("prix doit être un nombre entier positif.");
-  return false;
-}
-
-return true;
-}
-</script>
+ 
    <!------------statistiqueeee----->
- <?php
- //Connexion à la base de données
- $conn = new PDO('mysql:host=localhost;dbname=gestion_pharmacie', 'root', '');
- 
- // Requête SQL pour récupérer les informations de l'historique
- $query = "SELECT YEAR(date) AS annee, MONTH(date) AS mois, COUNT(*) AS nombre_ordonnance, SUM(prix) AS total_ventes FROM historique GROUP BY YEAR(date), MONTH(date) ORDER BY YEAR(date) DESC, MONTH(date) DESC";
- $stmt = $conn->query($query);
- ?>
- 
- <section id="statistiques" class="statistiques">
-   <div class="container" data-aos="fade-up">
+<?php
+   // Connexion à la base de données
+$conn =  config::getConnexion();
 
-       <div class="col-lg-9">
-         <div class="card">
-           <div class="card-header">
-             Statistiques des ventes
-           </div>
-           <div class="card-body">
-             <table class="table table-striped">
-               <thead>
-                 <tr>
-                   <th>Année</th>
-                   <th>Mois</th>
-                   <th>Nombre d'ordonnances</th>
-                   <th>Total des ventes</th>
-                 </tr>
-               </thead>
-               <tbody>
-                 <?php while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) { ?>
-                 <tr>
-                   <td><?php echo $row['annee']; ?></td>
-                   <td><?php echo $row['mois']; ?></td>
-                   <td><?php echo $row['nombre_ordonnance']; ?></td>
-                   <td><?php echo $row['total_ventes']; ?> DT</td>
-                 </tr>
-                 <?php } ?>
-               </tbody>
-             </table>
-           </div>
-         </div>
-       </div>
-     </div>
-   </div>
- 
+// Requête SQL pour récupérer les informations de l'historique
+$query = "SELECT YEAR(date) AS annee, MONTH(date) AS mois, COUNT(*) AS nombre_ordonnance, SUM(prix) AS total_ventes FROM historique GROUP BY YEAR(date), MONTH(date) ORDER BY YEAR(date) DESC, MONTH(date) DESC";
+$stmt = $conn->query($query);
+$data = array(
+  'labels' => array(),
+  'nombre_ordonnances' => array(),
+  'total_ventes' => array()
+);
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+  // Obtenir le mois en toutes lettres à partir du numéro de mois
+  $mois = DateTime::createFromFormat('!m', $row['mois'])->format('F');
+  $data['labels'][] = $mois . ' ' . $row['annee'];
+  $data['nombre_ordonnances'][] = $row['nombre_ordonnance'];
+  $data['total_ventes'][] = $row['total_ventes'];
+}
 
-   <div class="blog-pagination">
-          <ul class="justify-content-center">
-            <li><a href="#">1</a></li>
-            <li class="active"><a href="#">2</a></li>
-            <li><a href="#">3</a></li>
-          </ul>
-        </div><!-- End blog pagination -->
+// Création du graphique en utilisant la librairie Chart.js
+?>
+<canvas id="statistiques" width="800" height="400"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script>
+var ctx = document.getElementById('statistiques').getContext('2d');
+var chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: <?php echo json_encode($data['labels']); ?>,
+    datasets: [{
+      label: 'Nombre d\'ordonnances',
+      data: <?php echo json_encode($data['nombre_ordonnances']); ?>,
+      backgroundColor: 'rgba(255, 71, 71, 0.5)', // #FF4747
+      borderColor: 'rgba(255, 71, 71, 1)',
+      borderWidth: 1
+    }, {
+      label: 'Total prix',
+      data: <?php echo json_encode($data['total_ventes']); ?>,
+      backgroundColor: 'rgba(75, 73, 172, 0.5)', // #4B49AC
+      borderColor: 'rgba(75, 73, 172, 1)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
+    }
+  }
+});
+</script>
+
+
 
     <!-- page-body-wrapper ends -->
   </div>

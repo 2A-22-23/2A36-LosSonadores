@@ -295,27 +295,30 @@ $pages = ceil($total / $limit);
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Modifier l'pharmacie</h5>
+        <h5 class="modal-title" id="editModalLabel">Modifier une pharmacie</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        <form method="POST" action="updatephar.php" onsubmit="return validatePharmacieup() " >
+        <form method="POST" action="updatephar.php" onsubmit="return validatePharmaciem() " >
         <div class="form-group">
         <input type="hidden" name="idphar" value="<?= $pharmacie['idphar']; ?>">
             <label for="Name">Name</label>
             <input type="text" name="Name" class="form-control" id="Name" value="<?= $pharmacie['Name']; ?>">
+            <div id="nameAlert" class="alert"></div>
           </div>
           <div class="form-group">
            
             <label for="ville">Ville</label>
             <input type="text" name="ville" class="form-control" id="ville" value="<?= $pharmacie['ville']; ?>">
+            <div id="villeAlert" class="alert"></div>
           </div>
         
           <div class="form-group">
             <label for="Name">Adresse</label>
             <input type="text" name="address" class="form-control" id="address" value="<?= $pharmacie['address']; ?>">
+            <div id="adressAlert" class="alert"></div>
           </div>
           <button type="submit"  class="btn btn-primary">Enregistrer</button>
         </form>
@@ -352,37 +355,55 @@ for ($i = 1; $i <= $totalPages; $i++) {
 ?>
             
        
+            <?php
+// Connexion à la base de données
+$conn = config::getConnexion();
 
-    <!------------------------------CONTROLE----------------------------------->
+// Requête SQL pour récupérer les informations sur le nombre de pharmacies par ville
+$query = "SELECT ville, COUNT(*) AS nombre_pharmacies FROM pharmacie GROUP BY ville ORDER BY nombre_pharmacies DESC";
+$stmt = $conn->query($query);
+$data = array(
+  'labels' => array(),
+  'nombre_pharmacies ' => array()
+);
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+  $data['labels'][] = $row['ville'];
+  $data['nombre_pharmacies'][] = $row['nombre_pharmacies'];
+}
 
-    <script>
-       function validatePharmacieup() {
-    const nomRegex = /^[A-Za-z]+$/;
+// Création du graphique en utilisant la librairie Chart.js
+?>
+<canvas id="pharmacie" width="800" height="400"></canvas>
 
-    // Récupération des champs
- 
-    var Name = document.getElementById("Name");
-    var ville = document.getElementById("ville");
-    var address = document.getElementById("address");
-  
-    // Vérification que les champs obligatoires sont remplis
-    if (Name.value == "" || ville.value == "" || address.value == "") {
-      alert("Veuillez remplir tous les champs obligatoires.");
-      return false;
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4"></script>
+<script>
+var ctx = document.getElementById('pharmacie').getContext('2d');
+var chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: <?php echo json_encode($data['labels']); ?>,
+    datasets: [{
+      label: 'Nombre de pharmacies',
+      data: <?php echo json_encode($data['nombre_pharmacies']); ?>,
+      backgroundColor: 'rgba(255, 71, 71, 0.5)', // #FF4747
+      borderColor: 'rgba(255, 71, 71, 1)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      yAxes: [{
+        ticks: {
+          beginAtZero: true
+        }
+      }]
     }
-        // Vérification que les champs idphar et ido sont des nombres entiers positifs
- 
-    if (!nomRegex.test(Name.value)) {
-        alert('Le nom ne doit contenir que des lettres.');
-        return false;
-      }
-    if (!nomRegex.test(ville.value)) {
-        alert('la ville ne doit contenir que des lettres.');
-        return false;
-      }
-    return true;
   }
-  </script>
+});
+</script>
+
+
+  
       <!-- main-panel ends -->
     </div>
     <!-- page-body-wrapper ends -->
@@ -406,8 +427,8 @@ for ($i = 1; $i <= $totalPages; $i++) {
   <script src="../../js/file-upload.js"></script>
   <script src="../../js/typeahead.js"></script>
   <script src="../../js/select2.js"></script>
-  <script src="../../js/controleSaisieBack.js"></script>
 
+  <script src="./js/controleSaisieBack.js"></script>
   <!-- End custom js for this page-->
 
   
