@@ -27,7 +27,18 @@ class ProduitC{
             die('Erreur: '.$e->getMessage());
         }
     }
-    
+    function selectlimite($this_page_first_result,$results_per_page){
+        $sql='SELECT * FROM produit LIMIT ' . $this_page_first_result . ',' .  $results_per_page;
+        $db = config::getConnexion();
+        try{
+            $liste=$db->query($sql);
+            return $liste;
+        }
+        catch (Exception $e){
+            die('Erreur: '.$e->getMessage());
+        }
+    }
+
 public function afficherProduits(){
     $sql="SELECT * From Produit";
     $db=config::getConnexion();

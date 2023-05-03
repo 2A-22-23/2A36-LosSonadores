@@ -7,7 +7,7 @@ $catC= new CategorieC();
 
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 
 <head>
   <meta charset="utf-8">
@@ -119,129 +119,7 @@ $catC= new CategorieC();
                 </div>
         </div>
                       
-   <!--PARA BEGINS-->
-    <section id="Para" class="services sections-bg">
-      <div class="product_section layout_padding" >
-        <div class="container" data-aos="fade-up">
-           <div class="row">
-              <div class="section-header">
-                 <h2 class="product_taital">Nos Produits</h2>
-                 <p class="product_text">Retrouvez une sélection de meilleures marques para chez votre para en ligne VITALIA</p>
-              </div>
-              
-           </div>
-           <br></br>
-           <div class="product_section_2 layout_padding">
-              <div class="row">
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Shampoing</h4>
-                       <p class="lorem_text">Garnier Ultra Doux Shampooing Olive Mythique - 400ml </p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie/img-1.png" class="image_1" style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">30% remise</a></li>
-                                
-                             </ul>
-                          </div>
-                          <h3 class="price_text"> Prix 10dt
-
-                          </h3>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Sun care</h4>
-                       <p class="lorem_text">Cette crème vous assure une protection optimale contre le soleil  </p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie\img-2.png" class="image_1" style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">repture de stock</a></li>
-                                
-                             </ul>
-                          </div>
-                          <h3 class="price_text">Prix 100dt</h3>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Rouge à lèvres</h4>
-                       <p class="lorem_text">Le rouge à lèvres changeant de couleur</p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie\img-3.png" class="image_1" style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">2 = 1 gratuit</a></li>
-                                
-                             </ul>
-                          </div>
-                          <h3 class="price_text">Prix 50dt</h3>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Coffret parfum femme</h4>
-                       <p class="lorem_text">LA PETITE ROBE VIOLET </p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie\img-4.png" class="image_1 "style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">50% remise</a></li>
-                                
-                             </ul>
-                          </div>
-                          <h3 class="price_text">Prix 250dt</h3>
-                       </div>
-                    </div>
-                 </div>
-              </div>
-              <br></br>
-              <div class="row">
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Crème  mains</h4>
-                       <p class="lorem_text">hydratez vous mieux</p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie\img-5.png" class="image_1"style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">Meilleure vente</a></li>
-                               
-                             </ul>
-                          </div>
-                          <h3 class="price_text">Prix 15dt</h3>
-                       </div>
-                    </div>
-                 </div>
-                 <div class="col-lg-3 col-sm-6">
-                    <div class="product_box">
-                       <h4 class="bursh_text">Nail polish</h4>
-                       <p class="lorem_text">Your best coulour </p>
-                       <img src="C:\Users\TASNIM_KH\Desktop\front\Impact\assets\img\Para Pharmacie\img-6.png" class="image_1"style="width:224px;height: 280px;">
-                       <div class="btn_main">
-                          <div class="buy_bt">
-                             <ul>
-                                <li class="active"><a href="#">Repture de stock</a></li>
-                                
-                             </ul>
-                          </div>
-                          <h3 class="price_text">Prix 30dt</h3>
-                       </div>
-                    </div>
-                 </div>     
-              <div class="row">
-              </div>
-           
-              <div  class="section-header"><a href="#">Voir plus</a></div>
-           </div>
-        </div>
-     </div>
-     </section><!--Para Pharmacie section end -->
+   
 
 </div><!-- End #main -->
 

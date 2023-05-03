@@ -3,6 +3,9 @@
 .form-group {
   margin-bottom: 1.5rem;
 }
+
+
+
 .input-group-append,
 .input-group-prepend {
   color: $input-placeholder-color;
@@ -59,5 +62,8 @@ select {
   }
   .file-upload-info {
     background: transparent;
+  }
+  .error {
+    color : red;
   }
 }

@@ -143,17 +143,10 @@ $prodC= new ProduitC();
            <div class="product_section_2 layout_padding">
               <div class="row">
               <?php
-                        // connect to database
-                        $con = mysqli_connect('localhost','root','');
-                        mysqli_select_db($con, 'vitalia');
-
-                        // define how many results you want per page
                         $results_per_page = 4;
 
                         // find out the number of results stored in database
-                        $sql='SELECT * FROM produit';
-                        $result = mysqli_query($con, $sql);
-                        $number_of_results = mysqli_num_rows($result);
+                        $number_of_results =  $liste->rowCount();
 
                         // determine number of total pages available
                         $number_of_pages = ceil($number_of_results/$results_per_page);
@@ -169,25 +162,22 @@ $prodC= new ProduitC();
                         $this_page_first_result = ($page-1)*$results_per_page;
 
                         // retrieve selected results from database and display them on page
-                        $sql='SELECT * FROM produit LIMIT ' . $this_page_first_result . ',' .  $results_per_page;
-                        $result = mysqli_query($con, $sql);
-
-                        while($row = mysqli_fetch_array($result)) {
+                        
+                        $result = $prodC->selectlimite($this_page_first_result,$results_per_page);
+                        foreach($result as $row){ ?>
                             
-                        echo '
-                        <div class="col-lg-3 col-sm-6">
-                        <div class="product_box">
-                           <h4 class="bursh_text">'.$row['nom'].'</h4>
-                           <p class="lorem_text">'.$row['informations'].'</p>
-                           <img src="../back/'.$row['image'].'" class="image_1" style="width:224px;height: 280px;">
-                           <div class="btn_main">
-                              <h3 class="price_text"> Prix '.$row['prix'].'dt
+                          <div class="col-lg-3 col-sm-6">
+                          <div class="product_box">
+                            <h4 class="bursh_text"><?php echo $row['nom'] ?></h4>
+                            <p class="lorem_text"><?php echo $row['informations'] ?></p>
+                            <img src="../back/<?php echo $row['image'] ?>" class="image_1" style="width:224px;height: 280px;">
+                            <div class="btn_main">
+                              <h3 class="price_text"> Prix <?php echo $row['prix'] ?> dt
                               </h3>
                            </div>
                         </div>
-                     </div>';
-                                                }
-                                                ?>
+                     </div>
+                   <?php }  ?>
                  
               </div>
               <br></br>

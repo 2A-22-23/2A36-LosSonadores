@@ -10,11 +10,14 @@ $(function()
 			},
 			prix: {
 				required: true,
-				number: true
+				number: true,
+				min: 100,
+				max: 10000
 			},
 			informations: {
 				required: true,
 				minlength: 3
+				
 			},
 		},
 
@@ -23,9 +26,11 @@ $(function()
 				required: "Champ obligatoire",
 				minlength: " Le nom doit contenir au moins 2 caractères",
 			},
-			lieu: {
+			prix: {
 				required: "Champ obligatoire",
-				minlength: " Le prix doit etre numerique",
+				number: "Le prix doit etre numerique",
+				min: " Le prix doit etre supérieur ou egale a 100.",
+				max: " Le prix doit etre inférieur ou egale a 10000.",
 			},
 			informations: {
 				required: "Champ obligatoire",
@@ -34,5 +39,6 @@ $(function()
 
 
 		}
+		
 	});
 });
