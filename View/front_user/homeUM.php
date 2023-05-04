@@ -121,8 +121,8 @@ if(isset($_SESSION['CIN_patient']))
     <div class="container position-relative">
       <div class="row gy-5" data-aos="fade-in">
         <div class="col-lg-6 order-2 order-lg-1 d-flex flex-column justify-content-center text-center text-lg-start">
-          <h2>Welcome user<span></span></h2>
-          <div class="d-flex justify-content-center justify-content-lg-start">
+        <p class="title">WELCOME <?php echo $username; ?></p>
+        <div class="d-flex justify-content-center justify-content-lg-start">
             <a href="#about" class="btn-get-started">Get Started</a>
           </div>
         </div>
@@ -229,7 +229,7 @@ if(isset($_SESSION['CIN_patient']))
 
       <div class="section-header" style="text-align: center;">
         <h2>View Your Medical Record</h2>
-        <p>This service is only available if you have a medical record, check your sms messages</p>
+        <p>This service is only available if you have a medical record, check your mail</p>
         <br>
         <div class="form-box">
           <label for="email">Insert your code:</label>
