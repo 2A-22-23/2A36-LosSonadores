@@ -335,6 +335,52 @@ $list = $rendezvousC->listRendezvous();
               <div class="card">
                 <div class="card-body">
                   <p class="card-title">Appointments table</p>
+
+
+                  
+
+
+<div id="scroll-arrow">&darr;</div>
+
+	<!-- Script JavaScript pour le défilement -->
+	<script>
+		document.getElementById("scroll-arrow").addEventListener("click", function() {
+			window.scrollTo(0, document.body.scrollHeight);
+		});
+		// Afficher la flèche lorsque l'utilisateur a fait défiler la page de plus de 200px
+		window.addEventListener("scroll", function() {
+			var arrow = document.getElementById("scroll-arrow");
+			if (window.pageYOffset > 200) {
+				arrow.style.display = "block";
+			} else {
+				arrow.style.display = "none";
+			}
+		});
+	</script>
+
+
+<style>
+		#scroll-arrow {
+      z-index: 9999;
+			display: none;
+			position: fixed;
+			bottom: 30px;
+			left: 30px;
+			width: 50px;
+			height: 50px;
+			border-radius: 50%;
+			background-color: #666;
+			color: #fff;
+			font-size: 30px;
+			line-height: 50px;
+			text-align: center;
+			cursor: pointer;
+			transition: background-color 0.3s;
+		}
+		#scroll-arrow:hover {
+			background-color: #333;
+		}
+	</style>
                   <style>
                     body {
   margin: 0;
@@ -603,6 +649,80 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
     </script>
 <!-- Inclure la bibliothèque Chart.js -->
 <canvas id="graphique"></canvas>
+
+
+
+
+
+
+<p class="card-title">Rating Statistics</p>
+
+<?php
+// Paramètres de connexion à la base de données
+$servername = "localhost";
+$username = "root";
+$password = "211JFT9126";
+$dbname = "mabase";
+
+// Connexion à la base de données avec PDO
+try {
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // Configuration des options PDO
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+} catch (PDOException $e) {
+    echo "Erreur de connexion à la base de données: " . $e->getMessage();
+    exit();
+}
+
+// Requête SQL pour récupérer les statistiques sur les notes des médecins
+$stmt = $conn->prepare("SELECT note, COUNT(DISTINCT iddoc) AS nb_medecins FROM rendezvous WHERE note > 0 GROUP BY note");
+$stmt->execute();
+$results = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Transformation des données en deux tableaux
+$notes = array();
+$nb_medecins = array();
+foreach ($results as $row) {
+    $notes[] = $row['note'];
+    $nb_medecins[] = $row['nb_medecins'];
+}
+
+// Affichage du graphique à barres à l'aide de la bibliothèque Chart.js
+?>
+
+
+
+<canvas id="chart"></canvas>
+    <script>
+        var notes = <?php echo json_encode($notes); ?>;
+        var nb_medecins = <?php echo json_encode($nb_medecins); ?>;
+        var ctx = document.getElementById('chart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: notes,
+                datasets: [{
+                    label: 'Nombre de médecins selon le nombre des etoiles',
+                    data: nb_medecins,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)', // Utiliser une couleur verte transparente pour la couleur de fond
+  borderColor: 'rgba(75, 192, 192, 1)', // Utiliser une couleur verte opaque pour la bordure
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    </script>
+
+
 
 
 

@@ -146,11 +146,11 @@ if(isset($_POST['ajouter']))
       <nav id="navbar" class="navbar">
         <ul>
         
-    
-          <li><a href="homeDr.php">Home</a></li>
+        <li><a href="homeDr.php">Home</a></li>
        
-          <li><a href="DoctorSchedule - Copie.php">Schedule</a></li>
-          <li><a href="viewapp.php">Doctor's Appointments</a></li>
+       <li><a href="DoctorSchedule - Copie.php">Schedule</a></li>
+       <li><a href="viewapp.php">Doctor's Appointments</a></li>
+       <li><a href="planningCal.php">Doctor's Calendar</a></li>
             
 
           <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>

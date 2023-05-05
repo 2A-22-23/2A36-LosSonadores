@@ -17,6 +17,43 @@ if(isset($_SESSION['idclient'])){
 }else{
    $idclient = '';
 };
+
+$idclient = $_SESSION['idclient'];
+
+
+
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+  // get the rating value
+  $rating = isset($_POST['rating']) ? $_POST['rating'] : '';
+  // get the consultation ID
+  $idr = isset($_POST['idr']) ? $_POST['idr'] : '';
+  // get the patient ID
+
+
+  // check if all required fields are present
+  if (!empty($rating) && !empty($idr) && !empty($idclient)) {
+    // save the rating to the database
+    $sql = "UPDATE rendezvous SET note = :note WHERE idr = :idr";
+    $stmt = $db->prepare($sql);
+    $stmt->bindParam(':idr', $idr);
+    $stmt->bindParam(':note', $rating);
+    if ($stmt->execute()) {
+      // rating saved successfully, redirect back to appointments page
+      header('Location: ViewmyAPP.php');
+      exit;
+    } else {
+      // an error occurred, display error message
+      $error = 'An error occurred while saving the rating.';
+    }
+  } else {
+    // some required fields are missing, display error message
+    $error = 'Please select a rating.';
+  }
+}
+
+// display the rating form
+
+
 ?>
 
 <html lang="en">
@@ -51,6 +88,10 @@ if(isset($_SESSION['idclient'])){
   <!-- Template Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
   <link href="assets/css/medical_record.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+
   <!-- =======================================================
   * Template Name: Impact
   * Updated: Mar 10 2023 with Bootstrap v5.2.3
@@ -217,12 +258,31 @@ $result = $db->query($sql);
 $list = $result->fetchAll();
 ?>
 
+
+
+<form id="appointment-form" action="calendar.php" method="POST">
+
+
+
+  <input type="hidden" name="idclient" value="<?php echo $_SESSION['idclient']; ?>">
+                   <button name="appointment-btn" id="appointment-btn"  > Use calendar
+                   <img src="../View/cal.png" alt="Use Calendar" style="width: 60px; height: 50px;">
+                   </button>
+                   </form>
+
+
+
+
+
+               
+
 <table border="1" width="70%" height="10%">
   <tr>
     <th>Nom et Prénom Patient</th>
    
     <th>Nom et Prenom Docteur</th>
     <th>Date et heure</th>
+    <th>Status</th>
     <th>Action</th>
   </tr>
 
@@ -249,22 +309,43 @@ $list = $result->fetchAll();
           ?>
         </td>
         <td><?php echo $rendezvous['LaDate']; ?></td>
+
+        <td>
+          <?php if($rendezvous['status'] == 0): ?>
+            <span class=" badge-warning">for verification</span>
+          <?php endif ?>
+          <?php if($rendezvous['status'] == 1): ?>
+            <span class=" badge-primary">Confirmed</span>
+          <?php endif ?>
+          <?php if($rendezvous['status'] == 2): ?>
+            <span class=" badge-info">Rescheduled</span>
+          <?php endif ?>
+          <?php if($rendezvous['status'] == 3): ?>
+            <span class="status-done">Done</span>
+          <?php endif ?>
+        </td>
+
         <td align="center">
 
+        <?php if($rendezvous['note'] > 0): ?>
+    <p>Cette consultation a déjà été évaluée.</p>
+  <?php elseif($rendezvous['status'] == 3): ?>
+    <form class="rate-consultation-form" method="POST" action="rate.php">
+      <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
+      <input type="submit" name="rate" value="Rate Consultation">
+    </form>
+  <?php else: ?>
+    <form id="formU" method="POST" action="updateRendezVousP.php">
+      <input type="submit" name="update" value="Update">
+      <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
+    </form>
+    <form method="POST" action="deleteRendezVous.php">
+      <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
+      <a href="deleteRendezVous.php?idr=<?= $rendezvous['idr']; ?>" class="delete-link">Annuler</a>
+    </form>
+  <?php endif; ?>
 
-        <form id="formU"method="POST" action="updateRendezVousP.php">
-            <input type="submit" name="update" value="Update">
-            <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
 
-          </form>
-
-
-          <form method="post" action="deleteRendezVous.php">
-            <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
-            <a href="deleteRendezVous.php?idr=<?= $rendezvous['idr']; ?>" class="delete-link">Annuler</a>
-          </form>
-        </td>
-      </tr>
     <?php } ?>
   <?php } else { ?>
     <tr>
@@ -280,12 +361,50 @@ $list = $result->fetchAll();
 
 
 
+<style>
+  .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+
+    .pagination .current {
+      background-color: #88e0d5;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+</style>
+
+
+
+
+
 
 
 
 <style>
 
 
+
+#appointment-btn {
+    background-color:#008374;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+  }
+
+  #appointment-btn:hover {
+    background-color:#88e0d5; 
+  }
 
 .badge-warning {
   background-color: yellow;
@@ -320,6 +439,8 @@ a.delete-link {
 
 
     table {
+      justify-content: center;
+      
     border-collapse: collapse;
     width: 70%;
     margin: 0 auto;
@@ -453,11 +574,45 @@ button[type="submit"]:hover {
 
 </style>
 
+<!-- Bouton pour afficher la fenêtre modale -->
 
 
 
 
 
+
+
+
+
+
+
+
+
+<style>
+.rating {
+  display: inline-block;
+}
+
+.rating input {
+  display: none;
+}
+
+.rating label {
+  color: #ddd;
+  font-size: 2rem;
+  padding: 0 0.1rem;
+  cursor: pointer;
+}
+
+.rating label:hover,
+.rating label:hover ~ label,
+.rating input:checked ~ label {
+  color: #ffca08;
+}
+
+
+
+</style>
 
 
 

@@ -8,6 +8,9 @@ class Rendezvous {
     private $status;
     private $iddoc;
     private $idp;
+    private $note;
+    private $title;
+    private $end;
 
 
     public function getIdp() {

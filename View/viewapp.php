@@ -123,12 +123,11 @@ if(isset($_SESSION['idclient'])){
       <nav id="navbar" class="navbar">
         <ul>
         
-    
-          <li><a href="homeDr.php">Home</a></li>
+        <li><a href="homeDr.php">Home</a></li>
        
-          <li><a href="DoctorSchedule - Copie.php">Schedule</a></li>
-          <li><a href="viewapp.php">Doctor's Appointments</a></li>
-            
+       <li><a href="DoctorSchedule - Copie.php">Schedule</a></li>
+       <li><a href="viewapp.php">Doctor's Appointments</a></li>
+       <li><a href="planningCal.php">Doctor's Calendar</a></li>
 
           <li class="dropdown"><a href="#"> <i class="fas fa-user" style="font-size: 24px;"></i> <p> &nbsp;&nbsp;  </p> <span><?= $fetch_profile["login"]; ?></span><i class="bi bi-chevron-down dropdown-indicator"></i></a>
           <ul>
@@ -205,16 +204,43 @@ if(isset($_SESSION['idclient'])){
 
 
 
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
+<button id="export-button">
+  Export to Excel
+  <img src="../View/ex.png" alt="Exporter">
+</button>
+
+  
 
 
 
-  <?php
-// get the logged-in doctor's ID from the session
-$doctorId = $_SESSION['idclient'];
+<br>
+<br>
+<br>
+
+<form id="appointment-form" action="calendarMed.php" method="POST">
+
+
+
+  <input type="hidden" name="idclient" value="<?php echo $_SESSION['idclient']; ?>">
+                   <button name="appointment-btn" id="appointment-btn"  > Use calendar
+                   <img src="../View/cal.png" alt="Use Calendar" style="width: 60px; height: 50px;">
+                   </button>
+                   </form>
+
+
+
+
+
+
+                   <?php
+
+
 
 // retrieve the appointments for the logged-in doctor
 $db = config::getConnexion();
-$sql = "SELECT rd.*, 
+$doctorId = $_SESSION['idclient'];
+$sql = "SELECT rd.* , 
                pd.nom AS patient_nom, 
                pd.prenom AS patient_prenom,
                dd.nom AS docteur_nom,
@@ -227,11 +253,6 @@ $sql = "SELECT rd.*,
 $result = $db->query($sql);
 $list = $result->fetchAll();
 ?>
-<script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
-<button id="export-button">
-  Export to Excel
-  <img src="../View/ex.png" alt="Exporter">
-</button>
 
 <table  id="my-table" border="1" width="70%" height="10%">
   <tr>
@@ -240,6 +261,10 @@ $list = $result->fetchAll();
  
     <th>Date et heure</th>
     <th>Status</th>
+    <th>Action</th>
+    <th>Note</th>
+
+    
   
   </tr>
 
@@ -265,13 +290,44 @@ $list = $result->fetchAll();
           <?php endif ?>
         </td>
         <td align="center">
+
+        <?php if($rendezvous['status'] != 3): ?>
+     
           <form id="formU"method="POST" action="updateRendezVous.php">
             <input id="updateInput" type="submit" name="update" value="Update">
             <input type="hidden" name="idr" value="<?= $rendezvous['idr']; ?>">
-
+           
           </form>
+
+
+
+
+
+          <?php endif; ?>
+       
           
         </td>
+
+        <td>
+   
+        <?php if($rendezvous['note'] == 1): ?>
+            <span class=" badge-warning">BAD</span>
+          <?php endif ?>
+          <?php if($rendezvous['note'] == 2): ?>
+            <span class=" badge-primary">NOT BAD</span>
+          <?php endif ?>
+          <?php if($rendezvous['note'] == 3): ?>
+            <span class=" badge-info"> GOOD</span>
+          <?php endif ?>
+          <?php if($rendezvous['note'] == 4): ?>
+            <span class="status-done">VERY GOOD</span>
+            <?php endif ?>
+            <?php if($rendezvous['note'] == 5): ?>
+            <span class="status-done">EXCELLENT</span>
+          <?php endif ?>
+        </td>
+
+
       </tr>
     <?php } ?>
   <?php } else { ?>
@@ -281,6 +337,29 @@ $list = $result->fetchAll();
   <?php } ?>
 </table>
 
+
+
+
+
+
+<style>
+  .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+
+    .pagination .current {
+      background-color: #88e0d5;
+        color: white;
+        border: none;
+        padding: 0.5rem;
+        cursor: pointer;
+        text-decoration: none;
+        border-radius: 5px;
+    }
+</style>
 
 
 
@@ -309,6 +388,22 @@ exportButton.addEventListener("click", exportToExcel);
 
 
 <style>
+
+#appointment-btn {
+    background-color:#008374;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
+  }
+
+  #appointment-btn:hover {
+    background-color:#88e0d5; 
+  }
+
   #export-button img {
   width: 50px;
   height: 50px;
@@ -316,18 +411,18 @@ exportButton.addEventListener("click", exportToExcel);
 
 
 #export-button {
-  color: ;
- 
-  border: none;
-  border-radius: ;
-  cursor: pointer;
-  position: relative;
-  top: -30px;
-  right: 0;
+  background-color:#008374;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    float: left;
 }
 
 #export-button:hover {
-  background-color: /* Couleur de fond du bouton au survol */
+  background-color:#88e0d5;  /* Couleur de fond du bouton au survol */
 }
 
 

@@ -27,7 +27,7 @@ class RendezvousC
 
    
     function listRendezvous(){
-        $sql = "SELECT rendezvous.idr, user.nom AS patient_prenom, user.prenom AS patient_nom, rendezvous.LaDate, rendezvous.status, rendezvous.iddoc 
+        $sql = "SELECT rendezvous.idr, user.nom AS patient_prenom, user.prenom AS patient_nom, rendezvous.LaDate, rendezvous.status, rendezvous.iddoc ,rendezvous.note
         FROM rendezvous
         INNER JOIN user ON rendezvous.idclient = user.idclient";
         

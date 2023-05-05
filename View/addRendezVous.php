@@ -112,6 +112,11 @@ if(isset($_GET['doctorId'])) {
   <!-- Template Main CSS File -->
   <link href="assets/css/main.css" rel="stylesheet">
   <link href="assets/css/medical_record.css" rel="stylesheet">
+
+  <!-- Ajoutez ces lignes dans la balise head de votre page HTML -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/js/font-awesome.min.js"></script>
+
   <!-- =======================================================
   * Template Name: Impact
   * Updated: Mar 10 2023 with Bootstrap v5.2.3
@@ -298,15 +303,15 @@ $resultAdresses = $db->query($sqlAdresses);
 
   <form class="filtre" method="get" action="">
   <label for="specialite">Spécialité :</label>
-  <br>
+
 <select id="specialite" name="specialite">
   <option value="" disabled selected>Choisissez une spécialité</option>
   <?php while ($row = $resultSpecialites->fetch()) { ?>
     <option value="<?php echo $row['specialite']; ?>"><?php echo $row['specialite']; ?></option>
   <?php } ?>
 </select>
-<br>
-<label for="adresse">Adresse :</label> <br>
+
+<label for="adresse">Adresse :</label> 
 <select id="adresse" name="adresse">
   <option value="" disabled selected>Choisissez une adresse</option>
   <?php while ($row = $resultAdresses->fetch()) { ?>
@@ -334,7 +339,7 @@ $resultAdresses = $db->query($sqlAdresses);
   });
 </script>
 
-<br><br>
+
     <input type="submit" value="Rechercher">
   </form>
 
@@ -345,7 +350,7 @@ $resultAdresses = $db->query($sqlAdresses);
 
     $db = config::getConnexion();
     $sql = "SELECT idclient,nom, prenom,specialite,adresse FROM user WHERE type = 'Doctor'";
-
+   
     if (!empty($specialite)) {
       $sql .= " AND specialite = '$specialite'";
     }
@@ -377,10 +382,13 @@ $resultAdresses = $db->query($sqlAdresses);
                     <p>Name : <b>Dr. <?php echo $doctorNom; ?></b></p>
                     <p>Specialite : <b>  <?php echo $doctorSpeciality; ?></b> <p>
                     <p> Adresse : <b><?php echo $doctoradd; ?></b><p>
-                   
-
-
+                 
                     <button name="appointment-btn" id="appointment-btn" class="make-appointment-btn" data-doctor-id="<?php echo $doctorId; ?>" data-doctor-name="<?php echo $doctorNom; ?>" onclick="addId(<?php echo $doctorId; ?>)">Set Appointment</button>
+                   
+<br><br><br><br>
+
+
+                  
                     <?php
 		// votre code PHP ici
 
@@ -393,18 +401,45 @@ $resultAdresses = $db->query($sqlAdresses);
     
         // Afficher le planning du médecin
         if ($stmt->rowCount() > 0) {
-            echo "<h3>Planning du médecin :</h3>";
-            echo "<table><tr><th>Day</th><th>timeFrom</th><th> timeTo</th></tr>";
-            while($row = $stmt->fetch()) {
-                echo "<tr><td>" . $row["jour"] . "</td><td>" . $row["timeFrom"] . "</td><td>" . $row["timeTo"] . "</td></tr>";
-            }
-            echo "</table>";
+          while($row = $stmt->fetch()) {
+            echo "<div><strong>Day:</strong> " . $row["jour"] . "</div>";
+            echo "<div><strong>timeFrom:</strong> " . $row["timeFrom"] . "</div>";
+            echo "<div><strong>timeTo:</strong> " . $row["timeTo"] . "</div>";
+            echo "<br>";
+        }
+        
         } else {
             echo "<p>Aucun planning trouvé pour ce médecin.</p>";
         }
     
         $conn = null;
 	?>
+
+<?php
+// Requête SQL pour calculer la moyenne des notes
+$stmt = $db->prepare("SELECT AVG(note) AS moyenne FROM rendezvous WHERE iddoc = :doctorId AND note > 0");
+$stmt->bindParam(':doctorId', $doctorId);
+$stmt->execute();
+$row = $stmt->fetch();
+$moyenne = round($row['moyenne'], 1); // Arrondir la moyenne à une décimale
+// Afficher la moyenne sous forme d'étoiles
+echo "<p class='star-rating'>Avis  : ";
+if ($moyenne > 0) {
+    for ($i = 1; $i <= 5; $i++) {
+        if ($moyenne >= $i) {
+            echo "<i class='fa fa-star'></i>"; // Étoile pleine
+        } elseif ($moyenne >= $i - 0.5) {
+            echo "<i class='fa fa-star-half-o'></i>"; // Demi-étoile
+        } else {
+            echo "<i class='fa fa-star-o'></i>"; // Étoile vide
+        }
+    }
+} else {
+    echo "Pas encore de notes."; // Si aucune note n'a été donnée
+}
+echo "</p>";
+?>
+
 
                 </td>
             </table>
@@ -437,10 +472,12 @@ $resultAdresses = $db->query($sqlAdresses);
                     <p>Specialite : <b>  <?php echo $doctorSpeciality; ?></b> <p>
                     <p> Adresse : <b><?php echo $doctoradd; ?></b><p>
     
-
-
                     <button name="appointment-btn" id="appointment-btn" class="make-appointment-btn" data-doctor-id="<?php echo $doctorId; ?>" data-doctor-name="<?php echo $doctorNom; ?>" onclick="addId(<?php echo $doctorId; ?>)">Set Appointment</button>
-                    <?php
+                   
+                   <br><br><br><br>
+                  
+
+                   <?php
 		// votre code PHP ici
 
         $db = config::getConnexion();
@@ -452,18 +489,47 @@ $resultAdresses = $db->query($sqlAdresses);
     
         // Afficher le planning du médecin
         if ($stmt->rowCount() > 0) {
-            echo "<h3>Planning du médecin :</h3>";
-            echo "<table><tr><th>Day</th><th>timeFrom</th><th> timeTo</th></tr>";
-            while($row = $stmt->fetch()) {
-                echo "<tr><td>" . $row["jour"] . "</td><td>" . $row["timeFrom"] . "</td><td>" . $row["timeTo"] . "</td></tr>";
-            }
-            echo "</table>";
+          while($row = $stmt->fetch()) {
+            echo "<div><strong>Day:</strong> " . $row["jour"] . "</div>";
+            echo "<div><strong>timeFrom:</strong> " . $row["timeFrom"] . "</div>";
+            echo "<div><strong>timeTo:</strong> " . $row["timeTo"] . "</div>";
+            echo "<br>";
+        }
+        
         } else {
             echo "<p>Aucun planning trouvé pour ce médecin.</p>";
         }
     
         $conn = null;
 	?>
+
+
+
+
+<?php
+// Requête SQL pour calculer la moyenne des notes
+$stmt = $db->prepare("SELECT AVG(note) AS moyenne FROM rendezvous WHERE iddoc = :doctorId AND note > 0");
+$stmt->bindParam(':doctorId', $doctorId);
+$stmt->execute();
+$row = $stmt->fetch();
+$moyenne = round($row['moyenne'], 1); // Arrondir la moyenne à une décimale
+// Afficher la moyenne sous forme d'étoiles
+echo "<p class='star-rating'>Avis  : ";
+if ($moyenne > 0) {
+    for ($i = 1; $i <= 5; $i++) {
+        if ($moyenne >= $i) {
+            echo "<i class='fa fa-star'></i>"; // Étoile pleine
+        } elseif ($moyenne >= $i - 0.5) {
+            echo "<i class='fa fa-star-half-o'></i>"; // Demi-étoile
+        } else {
+            echo "<i class='fa fa-star-o'></i>"; // Étoile vide
+        }
+    }
+} else {
+    echo "Pas encore de notes."; // Si aucune note n'a été donnée
+}
+echo "</p>";
+?>
                 </td>
             </table>
         </div>
@@ -550,6 +616,22 @@ showModal();
 
 
     <style>
+      
+.star-rating {
+    font-size: 24px;
+    display: inline-block;
+    margin-left: 10px;
+    color: #f5c33b;
+}
+
+.star-rating .fa {
+    font-size: inherit;
+    color: inherit;
+}
+
+.star-rating .fa-star {
+    color: #f5c33b;
+}
 
 .notif {
     padding: 15px;
