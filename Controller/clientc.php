@@ -1,50 +1,67 @@
 <?php
-include 'C:\xampp\htdocs\t_assurance\config.php';
-include 'C:\xampp\htdocs\t_assurance\Model\client.php';
+include 'C:\xampp\htdocs\First_SUII\projet\config.php';
+include 'C:\xampp\htdocs\First_SUII\projet\View\tojrab03\entite\client.php';
 
 class clientc
 {
 function ajouter_client ($client)
 {
-$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,id_assurance) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:id_assurance) ";
+$sql="insert into user (nom,prenom,telephone,adresse,email,login,mdp,type,code) VALUES(:nom,:prenom,:telephone,:adresse,:email,:login,:mdp,:type,:code) ";
 $db=config::getConnexion();
+$mdp = $client->getMdp();
+$mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
 try
 {
     $req = $db->prepare($sql);
 
     $login = $client->getlogin();
-    $mdp = $client->getMdp();
+
     $nom = $client->getnom();
     $prenom = $client->getprenom();
     $telephone = $client->getTelephone();
     $email = $client->getemail();
     $adresse = $client->getadresse();
     $type=$client->getType();
-    $id_assurance=$id_assurance->getidassurance();
-
+    $code=$client->getCode();
+    
     $req->bindValue(':login',$login);
     $req->bindValue(':type',$type);
-    $req->bindValue(':mdp', $mdp);
+    $req->bindValue(':mdp', $mdp_hash);
     $req->bindValue(':nom', $nom);
     $req->bindValue(':prenom', $prenom);
     $req->bindValue(':telephone', $telephone); 
     $req->bindValue(':email', $email);
     $req->bindValue(':adresse', $adresse);
-    $req->bindValue(':id_assurance', $id_assurance);
 
-
+    $req->bindValue(':code',$code);
     $req->execute();
     //echo "<script>alert('added ');</script>";
 
 
 }
 catch (Exception $e) {
-    echo 'Erreur: data not added cuz mail alredy exist' . $e->getMessage();
-//   echo "<script>alert('Email is already used ');</script>";
+    echo 'Erreur:' . $e->getMessage();
+ //echo "<script>alert('Email is already used ');</script>";
 
 }
 }
 
+function ajouterClientimg($email,$image)
+{
+    $sql="UPDATE user SET image=:image WHERE email=:email";
+    $db = config::getConnexion();
+    try
+        {
+        $req=$db->prepare($sql);
+        $req->bindValue(':email',$email);
+        $req->bindValue(':image',$image);
+        $req->execute();
+        }
+    catch (Exception $e)
+        {
+            echo 'Erreur: '.$e->getMessage();
+        }
+    }
 
 function deleteClient($id)
     {
@@ -122,15 +139,15 @@ function afficher_client($client)
     }
     function modifier_mdp($client,$login,$mdp)
     {
-        $query = "UPDATE user set mdp_cl=:mdp_cl where login_cl=:login_cl";
+        $query = "UPDATE user set mdp=:mdp where login=:login";
         $db=config::getConnexion();
         try
         {
             $req=$db->prepare($query);
             $login = $client->getlogin();
             $mdp = $client->getmdp();
-            $req->bindValue(':mdp_cl',$mdp);
-            $req->bindValue('login_cl',$login);
+            $req->bindValue(':mdp',$mdp);
+            $req->bindValue('login',$login);
             $req->execute();
         }
         catch(Exception $e)
@@ -139,44 +156,7 @@ function afficher_client($client)
         }
     }
 
-    function createUser($client) 
-    {   $type=$client->getType();
-        $login = $client->getlogin();
-        $mdp = $client->getMdp();
-        $nom = $client->getnom();
-        $prenom = $client->getprenom();
-        $telephone = $client->getTelephone();
-        $email = $client->getemail();
-        $adresse = $client->getadresse();
-        $mdp=md5($mdp);
-         try {
-           $con = config::getConnexion();
-              $sql = "insert into user (nom,prenom,telephone,adresse,email,login,mdp,type) VALUES('$nom','$prenom','$telephone','$adresse','$email','$login','$mdp','$type') ";
-              $con->exec($sql);
-                   session_start();
-                       $_SESSION['valide']=true;
-                       $_SESSION['email']=$email;
-                   
-                   
-                   header('Location:C:\xampp\htdocs\tojrab03\views\Impact\index.php');      
-}
-catch(PDOException $e) 
-{ 
-echo " 
-<script>   
- var txt;
-var r = confirm('Ops cette email est utilisée par un autre utilisateuressaie encore!');
-if (r == true) { 		
-    	window.location.replace('C:/xampp/htdocs/tojrab02/views/Impact/login.php');
-
-} else {
-    alert('Hello world!');
-
-}</script>";
-
-echo $sql . "<br>" . $e->getMessage();
-}
-}
+   
 function getAllUsers() {
     $con = config::getConnexion();
     $requete = 'SELECT * from user';
@@ -184,15 +164,13 @@ function getAllUsers() {
     return $rows;
 }
 
-function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp)
+function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$mdp,$image,$code)
  {
-    $mdp=md5($mdp);
+
+    $mdp_hash = password_hash($mdp, PASSWORD_DEFAULT);
     try {
         $con = config::getConnexion();
-        $sql = "UPDATE user set 
-                    nom_client= '$nom',prenom_client='$prenom',
-                    telephone_cl='$telephone',adresse_cl='$adresse',
-                     email='$email',login_cl='$login',mdp_cl='$mdp',type='$type' WHERE idclient='$id'";
+        $sql = "UPDATE user set nom= '$nom',prenom='$prenom',  telephone='$telephone',adresse='$adresse', email='$email',login='$login',mdp='$mdp_hash',type='$type',image='$image', code=''$code'' WHERE idclient='$id'";
     
         $stmt = $con->query($sql);
     }
@@ -201,21 +179,7 @@ function updateUser($id,$nom,$prenom,$type,$telephone,$adresse,$email,$login,$md
     }
 }
 
-function verifier_client($login,$mdp)
-{   
-    $query ="SELECT * from user where login=:login and mdp=:mdp";
-   
-    $db = config::getConnexion();
-    try {
-        $req = $db->prepare($query);
-        $req->bindValue(':login', $login);
-        $req->bindValue(':mdp', $mdp);
-        $req->execute();
-        return $req->fetchAll();
-    } catch (Exception $e) {
-        die('Erreur: ' . $e->getMessage());
-    }
-}
+
 
 
    
@@ -225,11 +189,11 @@ function verifier_client($login,$mdp)
 
 //$client1= new client("balsem","zakraoui","med",16,"edqdqsd","@lioo","hhju","211"); 
 //$client3= new client("Wiem","zakraoui","patient",50546498,"siliana","@esprit.tn","login10","ll"); 
-//$c=new clientc ;
+$c=new clientc ;
 
 //$c->createUser($client3);
-//$c->ajouter_client($client3);
-//$c->updateUser(2,"alison","and",4654654,"LA","@email","211jft","eb163727917cbba1eea2");
+//$c->deleteClient(165);
+//$c->updateUser(179,"alison","and",4654654,"LA","@email","211jft","eb163727917cbba1eea2","doctor");
 
 
 

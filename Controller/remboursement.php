@@ -1,12 +1,12 @@
 <?php
-include 'C:\xampp\htdocs\t_assurance\config.php';
-include 'C:\xampp\htdocs\t_assurance\Model\remboursementM.php';
-include 'C:\xampp\htdocs\t_assurance\Model\AssuranceM.php';
+include 'C:\xampp\htdocs\First_SUII\projet\config.php';
+include 'C:\xampp\htdocs\First_SUII\projet\Model\remboursementM.php';
+include 'C:\xampp\htdocs\First_SUII\projet\Model\AssuranceM.php';
 date_default_timezone_set('Etc/UTC');
 
-require_once 'C:\xampp\htdocs\t_assurance\Views\Impact\PHPMailer-master\src\PHPMailer.php' ;
-require_once 'C:\xampp\htdocs\t_assurance\Views\Impact\PHPMailer-master\src\SMTP.php' ;
-require_once 'C:\xampp\htdocs\t_assurance\Views\Impact\PHPMailer-master\src\Exception.php' ;
+require_once 'C:\xampp\htdocs\First_SUII\projet\View\front_user\PHPMailer-master\src\PHPMailer.php' ;
+require_once 'C:\xampp\htdocs\First_SUII\projet\View\front_user\PHPMailer-master\src\SMTP.php' ;
+require_once 'C:\xampp\htdocs\First_SUII\projet\View\front_user\PHPMailer-master\src\Exception.php' ;
 
 use \PHPMailer\PHPMailer\PHPMailer;
 use \PHPMailer\PHPMailer\Exception;

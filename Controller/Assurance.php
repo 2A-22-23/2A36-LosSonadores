@@ -1,6 +1,6 @@
 <?php
-include 'C:\xampp\htdocs\t_assurance\config.php';
-include 'C:\xampp\htdocs\t_assurance\Model\AssuranceM.php';
+include 'C:\xampp\htdocs\First_SUII\projet\config.php';
+include 'C:\xampp\htdocs\First_SUII\projet\Model\AssuranceM.php';
 
 
 class Assurance
