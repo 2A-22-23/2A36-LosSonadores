@@ -9,6 +9,7 @@
 		<!-- FAVICON -->
 		<link href="../assets/Template/images/logo web (1)1.png" rel="icon">        
 </head>
+
 <body>
 <!-- partial:index.partial.html -->
 <!-- about -->
