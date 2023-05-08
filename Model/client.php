@@ -7,6 +7,7 @@ private $nom;
 private $prenom;
 private $type;
 private $telephone;
+
 private $adresse;
 private $email;
 private $login;
