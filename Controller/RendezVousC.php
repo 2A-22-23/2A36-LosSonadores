@@ -6,6 +6,7 @@ include 'C:\xampp\htdocs\First_SUII\projet\Controller\RendezVousC.php';
 class RendezvousC
 {
 
+    
     function deleteRendezvous($id)
     {
         $sql = "DELETE FROM rendezvous WHERE idr = :id";
